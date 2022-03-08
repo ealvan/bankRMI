@@ -12,7 +12,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class RMIClient implements UpperCaseClient{
     private UpperCaseServer server;
     public RMIClient() throws RemoteException{
-        UnicastRemoteObject.exportObject((UpperCaseClient)this, 2011);
+        UnicastRemoteObject.exportObject((UpperCaseClient)this, 2019);
         // exportClient();
     }
     public void startClient()  throws RemoteException, NotBoundException{
