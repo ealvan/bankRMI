@@ -18,7 +18,7 @@ public class PersonImpl implements Person,Serializable{
     //     return name;
     // }
     public void write(){
-        String filename = "pepe.txt";
+        String filename = "bankBD_A.txt";
         try {
             FileWriter myWriter = new FileWriter(filename);
             myWriter.write("es local???");
