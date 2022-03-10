@@ -1,7 +1,7 @@
 package callbackexample.client;
 
 import java.rmi.NotBoundException;
-import java.rmi.RMISecurityManager;
+// import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
@@ -9,12 +9,12 @@ public class RunClient {
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
 
-        System.setProperty("java.security.policy", "all.policy");
+        // System.setProperty("java.security.policy", "all.policy");
 
-        if (System.getSecurityManager() == null)
-        {
-            System.setSecurityManager(new RMISecurityManager());
-        }
+        // if (System.getSecurityManager() == null)
+        // {
+        //     System.setSecurityManager(new RMISecurityManager());
+        // }
 
         RMIClient client = new RMIClient();
         client.startClient();
