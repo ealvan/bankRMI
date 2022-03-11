@@ -10,36 +10,32 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
 
 	private float balance = 0.0f;
     private float workingBalance = 0.0f;    
-    private Object currentKey = null;    
-    private Key asd = null;
+    private KeyInterface KeyValue = null;
+    private String accountID;
 
-    protected MyBankAccount() throws RemoteException {
+    public MyBankAccount() throws RemoteException {
         super();
     }
     
-    public void setValue() {
-    	balance = 10.00f;
+    public void setValue(float a) 
+      throws RemoteException
+    {
+    	balance = a;
     }
     
-    public synchronized float balance(Object key) 
+    public synchronized float balance(KeyInterface key) 
       throws KeyException, RemoteException
-    {
-    	Key a = (Key) key;
-    	int dato = a.getId();
-    	Key b = (Key) currentKey;
-    	int dato2 = b.getId();
-    	
-    	
-        if(  dato != dato2 )
+    {	
+        if(  key.getId() != KeyValue.getId() )
             throw new KeyException();
  
         return workingBalance;
     }
 
-    public synchronized void deposit(Object key, float amount)
+    public synchronized void deposit(KeyInterface key, float amount)
       throws BadAmount, KeyException, RemoteException
     {
-        if( key != currentKey )
+        if( key.getId() != KeyValue.getId() )
             throw new KeyException();
 
         if( workingBalance < -amount )
@@ -48,10 +44,10 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
         workingBalance += amount;
     }
 
-    public synchronized void setBalance(Object key, float amount)
+    public synchronized void setBalance(KeyInterface key, float amount)
       throws BadAmount, KeyException, RemoteException
     {
-        if( key != currentKey )
+        if( key.getId() != KeyValue.getId() )
             throw new KeyException();
 
         if( workingBalance < -amount )
@@ -60,21 +56,21 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
         workingBalance = amount;
     }
 
-    public synchronized void withdraw(Object key, float amount)
+    public synchronized void withdraw(KeyInterface key, float amount)
       throws BadAmount, KeyException, RemoteException
     {
         deposit(key, -amount);
     }//
 
-    public void join(Object key) 
+    public void join(KeyInterface key) 
       throws KeyException, RemoteException
     {
     	System.out.println(key);
-        if( currentKey != null ){
+        if( KeyValue != null ){
           int i = 15; //Intentos de preguntar
           boolean tiene = true;
           while (tiene && i-- > 0) { //Vuelvo a preguntar por 1 segundo
-            if( currentKey != null ){
+            if( KeyValue != null ){
               try{
                 System.out.println("Esperara 100 ms");
                 Thread.sleep(100);
@@ -91,32 +87,32 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
           } 
        }
 
-        currentKey = key;    
+        KeyValue = key;    
         workingBalance = balance;          
        
     }
 
-    public boolean canCommit(Object key)
+    public boolean canCommit(KeyInterface key)
       throws KeyException, RemoteException
     {
-        return( key == currentKey);
+        return( key.getId() == KeyValue.getId());
     }
 
-    public void commit(Object key)
+    public void commit(KeyInterface key)
       throws KeyException, RemoteException
     {
-        if( key != currentKey )
+        if( key.getId() != KeyValue.getId()  )
             throw new KeyException();
  
         balance = workingBalance;    
-        currentKey = null;  
+        KeyValue = null;  
     }
 
-    public void abort(Object key)
+    public void abort(KeyInterface key)
       throws KeyException, RemoteException
     {
         //file con el anterior balance   
-        currentKey = null;    
+        KeyValue = null;    
         // System.out.println("Abortado");
     }
     public String toString(){
@@ -128,7 +124,7 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
             System.setProperty("java.rmi.server.hostname","192.168.0.3");
             Registry a = LocateRegistry.createRegistry(1091);
             MyBankAccount aux = new MyBankAccount();
-            aux.setValue();
+            aux.setValue(100f);
             a.bind("Asd", aux);     
             
             System.err.println("Server 1  ready");
@@ -140,6 +136,39 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
  
         }
     }
+
+	@Override
+	public void tryPass(KeyInterface key) throws RemoteException {
+		KeyValue = key;
+		System.out.println(KeyValue.getId());
+		
+	}
+
+	@Override
+	public String getID() throws RemoteException {
+		return accountID;
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public MyTransactor getObject() throws RemoteException {
+		MyTransactor aux = new MyBankAccount();
+		return aux;
+	}
+
+	@Override
+	public KeyInterface getObjectKey() throws RemoteException {
+		KeyInterface ret = new Key();
+		return ret;
+	}
+
+	@Override
+	public float getBalance() throws KeyException, RemoteException {
+		// TODO Auto-generated method stub
+		return balance;
+	}
+
 
 
 }
