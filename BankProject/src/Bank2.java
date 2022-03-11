@@ -10,6 +10,9 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 	
 	public Bank2() throws RemoteException {
 		super();
+		aux1 = new MyBankAccount(); 
+		aux1.setValue(200);
+		//MyTransactor a = firstBankRemoteObject.getObject();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -117,8 +120,6 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 		System.out.println(bankBaseObject);
 		System.out.println(firstBankRemoteObject);
 		System.out.println(secondBankRemoteObject);
-		aux1 = new MyBankAccount(); 
-		aux1.setValue(200);
 		//MyTransactor a = firstBankRemoteObject.getObject();
 		
 	}
@@ -152,13 +153,14 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 		MyTransactor a = firstBankRemoteObject.returnObjectTest(); //A
 		MyTransactor c = secondBankRemoteObject.returnObjectTest(); //C
 		
+
         Thread tT = new Thread(new Runnable() {
             public void run()  {
                 try{
+                	Thread.sleep(100);
                     System.out.println("=== T Iniciando ===");
                     print(a,b,c);
-                    Thread.sleep(1000);
-                                     
+                        
                     boolean etT = transactionT(a, b);
                     if (etT == true ) {
                         System.out.println("Transaccion T exitosa");

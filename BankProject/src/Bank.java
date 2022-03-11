@@ -10,6 +10,9 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 	
 	public Bank() throws RemoteException {
 		super();
+		aux1 = new MyBankAccount(); 
+		aux1.setValue(100);
+		//MyTransactor a = firstBankRemoteObject.getObject();
 		// TODO Auto-generated constructor stub
 	}
 	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
@@ -91,9 +94,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 		System.out.println(bankBaseObject);
 		System.out.println(firstBankRemoteObject);
 		System.out.println(secondBankRemoteObject);
-		aux1 = new MyBankAccount(); 
-		aux1.setValue(100);
-		//MyTransactor a = firstBankRemoteObject.getObject();
+
 		
 	}
 	
@@ -106,7 +107,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 	@Override
 	public BankInterface getObject() throws RemoteException {
 		System.out.println("entro aca");
-		BankInterface aux = new Bank2();
+		BankInterface aux = new Bank();
 		return aux;
 	}
 	
