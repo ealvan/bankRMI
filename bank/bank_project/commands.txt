@@ -1,3 +1,6 @@
+Compile Code:
+javac -d bin bank1/client/*.java bank1/server/*.java bank2/client/*.java bank2/server/*.java 
+
 Run Server:
 java -classpath bin -Djava.rmi.server.codebase=file:bin/ bank1.server.RunServerA
 

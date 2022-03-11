@@ -33,5 +33,8 @@ public interface Bank extends Remote{
 //------------------------------------------------------------------
     //TEST operations
     public String sayHello(String name) throws RemoteException;
-    
+//-------------------------------------------------------------------
+    //SHARED OBJECTS VIA HELLO
+    public void shareObjects(Bank A, Bank B) throws RemoteException;
+    public Bank getBank(String str) throws RemoteException;
 }

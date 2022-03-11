@@ -1,4 +1,5 @@
-package bank1.server;
+package bank2.server;
+
 //package bank1.shared;
 // import bank1.shared.Bank;
 import shared.Transaction;
@@ -11,14 +12,14 @@ import shared.Bank;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 
-public class BankA extends UnicastRemoteObject implements Bank {
+public class BankB extends UnicastRemoteObject implements Bank {
     private float balance = 0.0f;
     private float workingBalance = 0.0f;    
-    private Transaction currentKey = null; 
+    private Transaction currentKey = null;
     private Bank serverBankA;
-    private Bank serverBankB;   
-
-    public BankA(float initBalance) throws RemoteException{
+    private Bank serverBankB;
+    
+    public BankB(float initBalance) throws RemoteException{
         super();
         balance = initBalance;
         // UnicastRemoteObject.exportObject(this,2021);
@@ -98,17 +99,16 @@ public class BankA extends UnicastRemoteObject implements Bank {
 //------------------------------------------------------------------
     //TEST operations
     public String sayHello(String name){
-        String str = "Hello Dear "+name;
+        String str = "Hello Dear "+name+" of BANK B!!";
         System.out.println(str);
         return str;
     }
+
 //-------------------------------------------------------------------
     //SHARED OBJECTS VIA HELLO
-    public void shareObjects(Bank A, Bank B) throws RemoteException{
-        serverBankB = A;
-        String str = serverBankB.sayHello("BANK B!!");
-        System.out.println(str);
-        // serverBankA = B;
+    public void shareObjects(Bank A, Bank B){
+        serverBankA = A;
+        // serverBankA = A;
     }
     public Bank getBank(String str) {
         if(str.toUpperCase() == "A"){
@@ -118,5 +118,4 @@ public class BankA extends UnicastRemoteObject implements Bank {
         }
         return null;
     }
-
 }
