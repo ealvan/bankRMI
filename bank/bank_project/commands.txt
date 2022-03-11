@@ -1,0 +1,5 @@
+Run Server:
+java -classpath bin -Djava.rmi.server.codebase=file:bin/ bank1.server.RunServerA
+
+Run Client:
+java -classpath bin bank2.client.Client
