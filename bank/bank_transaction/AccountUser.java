@@ -4,9 +4,13 @@ public class AccountUser
     public boolean transfer(float amount, MyBankAccount src, MyBankAccount dst)
     {
         Object key = new Object();
+        //dadsdsadsadas
         try{
             src.join(key);
             dst.join(key);
+
+
+
         }catch(Exception e){
             System.out.println("Error: in join() operation");
         }
