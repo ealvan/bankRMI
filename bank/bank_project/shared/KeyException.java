@@ -1,4 +1,4 @@
-package bank2.shared;
+package shared;
 
 public class KeyException extends Exception {
     

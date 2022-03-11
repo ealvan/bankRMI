@@ -13,9 +13,11 @@ public class RMIServerImpl implements UpperCaseServer{
     }
     public void toUpperCase(String str,UpperCaseClient client){
         String result = str.toUpperCase();
-        try{        
+        try{
             Thread.sleep(3000);
-        }catch(Exception ignored){}
+        }catch(Exception ignored){
+            
+        }
 
         try{
             client.upperCaseResult(result);

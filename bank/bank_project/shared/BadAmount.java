@@ -1,4 +1,4 @@
-package bank1.shared;
+package shared;
 
 public class BadAmount extends Exception {
     

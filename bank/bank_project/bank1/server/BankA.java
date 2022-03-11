@@ -1,17 +1,25 @@
 package bank1.server;
 //package bank1.shared;
-import bank1.shared.Bank;
-import bank1.shared.KeyException;
-import bank1.shared.Transaction;
-import bank1.shared.BadAmount;
+// import bank1.shared.Bank;
+import shared.Transaction;
+import shared.BadAmount;
+import shared.KeyException;
+import shared.Bank;
 
-public class BankA implements Bank {
+// import bank1.errors.KeyException;
+// import bank1.errors.*;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.RemoteException;
+
+public class BankA extends UnicastRemoteObject implements Bank {
     private float balance = 0.0f;
     private float workingBalance = 0.0f;    
     private Transaction currentKey = null;    
 
-    public BankA(float initBalance){
+    public BankA(float initBalance) throws RemoteException{
+        super();
         balance = initBalance;
+        // UnicastRemoteObject.exportObject(this,2021);
     }
     //TRANSACTOR ...
     public void join(Transaction key) throws KeyException{

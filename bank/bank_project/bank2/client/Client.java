@@ -1,24 +1,41 @@
 package bank2.client;
 
-import bank2.shared.Bank;
 import java.rmi.registry.Registry;
+
+import shared.*;
+
 import java.rmi.registry.LocateRegistry;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 public class Client {
     private Bank serverBank;
-    public Client(){}
-    public Bank getBankAccount(String accountNumber) throws RemoteException, NotBoundException{
+    public Client(){
+        // startClient();
+    }
+    public void startClient() throws RemoteException, NotBoundException{
         Registry registry = LocateRegistry.getRegistry("localhost", 2022);
         serverBank = (Bank)registry.lookup("bankA");
-        return serverBank;
+    }
+    public void sayHello(){
+        String str = "";
+        try{
+        str = serverBank.sayHello("BANK OF AMERICA");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println(str);
     }
 
     public static void main(String args[])throws RemoteException,NotBoundException{
-        Client client = new Client();
-        Bank remoteServerBank = client.getBankAccount("accountNumber");
-        String str = remoteServerBank.sayHello("Pepe");
-        System.out.println(str+"\n Succesfully remote app!!");
+        try{
+            Client client = new Client();
+            client.startClient();
+            client.sayHello();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 }

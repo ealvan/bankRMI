@@ -1,4 +1,4 @@
-package bank2.shared;
+package shared;
 
 import java.rmi.RemoteException;
 import java.rmi.Remote;
