@@ -1,6 +1,7 @@
 {
     "java.project.sourcePaths": [
         "try",
-        "learn/basic"
+        "learn/basic",
+        "bank/bank_project"
     ]
 }
