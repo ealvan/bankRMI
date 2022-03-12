@@ -2,6 +2,7 @@ package bank1;
 
 
 import shared.*;
+import shared.User;
 
 import java.rmi.NotBoundException;
 // import java.rmi.Remote;
@@ -10,12 +11,53 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BankA extends UnicastRemoteObject implements BankInterface{
 	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
-	// private ArrayList<Account> userList = new ArrayList<Account>();
-
+	// private ArrayList<UserInterface> usersList = new ArrayList<UserInterface>();
+    //String = UserId
+    //UserInterface = Remote Object
+    private HashMap<String,UserInterface> userList = new HashMap<String,UserInterface>();
+    //---------------------------------------------------------------------------------
+    @Override
+    public UserInterface login(String userID){
+        if(!userList.containsKey(userID)){
+            try{
+                throw  new Exception("Usuario no esta en HashMap userList");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        UserInterface tmp = userList.get(userID);
+        return tmp;    
+    }
+    
+    public void addUser(UserInterface user) throws RemoteException{
+        
+        if(user.getUserId() != null){
+            if(userList.containsKey(user.getUserId())){
+                try{
+                    throw  new Exception("La clave "+user.getUserId() + " ya existe!!, cree una nueva");
+                }catch(Exception e){
+                    e.printStackTrace();
+                }            
+                return;
+            }
+            System.out.println("Nuevo usuario agregado UserID= "+user.getUserId());
+            userList.put(user.getUserId(), user);
+            return;
+        }
+        
+        try{
+            throw  new Exception("Usuario no tiene UserID es NULL");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     private Registry baseServer;
+
 	private Registry firstRemoteServer;
 	private Registry secondRemoteServer;
 	
@@ -27,7 +69,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
     public BankA() throws RemoteException {
 		super();
     }
- 
+    
 	
     public void startServer(String ip, int port) {
         try {
@@ -102,31 +144,47 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         System.out.println("NO ENTRO!! ");
         return null;
     }
-    public static void main(String args[])throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
-        MyTransactor testAccount = new MyBankAccount("A001",100f);        
-        
-        BankA bankA = new BankA();
-        bankA.startServer("192.168.2.28", 1091);
+    public HashMap<String,UserInterface> getUserList() {
+        return userList;
+    }
+    public ArrayList<MyTransactor> getAccounts(){
+        return lista;
+    }
 
+    public static void main(String args[])throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
+        BankA bankA = new BankA();
+
+        
+
+        UserInterface user = new User("A1-User");
+        MyTransactor testAccount = new MyBankAccount("A001",user,100f);        
+        
+        bankA.startServer("192.168.2.28", 1091);
+        
+        //REMOVE ALL content before started
+        bankA.bankBaseObject.getUserList().clear();
+        bankA.bankBaseObject.getAccounts().clear();
+        
         //add remote object transactor to account list objects
         bankA.bankBaseObject.addBankAccount(testAccount);
-
+        bankA.bankBaseObject.addUser(user);
 
         Thread.sleep(10000);
 
         bankA.assignServer("192.168.2.28", 1092, "192.168.2.28", 1093);
 
         // Thread.sleep(7000);
-        MyTransactor accountC = bankA.getObject("bank2").browse("C001");
-        Key key = new Key();
-        accountC.join(key);
-        accountC.deposit(key, 80);
-        if(accountC.canCommit(key)){
-            accountC.commit(key);
-        }else{
-            accountC.abort(key);
-        }
-        System.out.println("Balance: "+accountC.getBalance());
+
+        // MyTransactor accountC = bankA.getObject("bank2").browse("C001");
+        // Key key = new Key();
+        // accountC.join(key);
+        // accountC.deposit(key, 80);
+        // if(accountC.canCommit(key)){
+        //     accountC.commit(key);
+        // }else{
+        //     accountC.abort(key);
+        // }
+        // System.out.println("Balance: "+accountC.getBalance());
 
 
     }

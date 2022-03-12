@@ -8,10 +8,48 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BankB extends UnicastRemoteObject implements BankInterface{
 	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
-
+    private HashMap<String,UserInterface> userList = new HashMap<String,UserInterface>();
+    //---------------------------------------------------------------------------------
+    @Override
+    public UserInterface login(String userID){
+        if(!userList.containsKey(userID)){
+            try{
+                throw  new Exception("Usuario no esta en HashMap userList");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        UserInterface tmp = userList.get(userID);
+        return tmp;    
+    }
+    
+    public void addUser(UserInterface user) throws RemoteException{
+        
+        if(user.getUserId() != null){
+            if(userList.containsKey(user.getUserId())){
+                try{
+                    throw  new Exception("La clave "+user.getUserId() + " ya existe!!, cree una nueva");
+                }catch(Exception e){
+                    e.printStackTrace();
+                }            
+                return;
+            }
+            System.out.println("Nuevo usuario agregado UserID= "+user.getUserId());
+            userList.put(user.getUserId(), user);
+            return;
+        }
+        
+        try{
+            throw  new Exception("Usuario no tiene UserID es NULL");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     private Registry baseServer;
 	private Registry firstRemoteServer;
 	private Registry secondRemoteServer;
@@ -24,7 +62,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
     public BankB() throws RemoteException {
 		super();
     }
- 
+
 	
     public void startServer(String ip, int port) {
         try {
@@ -90,16 +128,18 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
 
 //TRANSACTIONS
     public static boolean transactionT(MyTransactor a, MyTransactor b) 
-            throws KeyException,BadAmount, RemoteException{
+            throws KeyException,BadAmount,UserException, RemoteException{
 
         //ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
+        System.out.println("Owner of a obj es UserID= "+a.getOwner().getUserId());
+        System.out.println("Owner of b obj es UserID= "+b.getOwner().getUserId());
         
         Key t1 = new Key();
         b.join(t1); //lock
         float bal = b.balance(t1);//220
-        b.setBalance(t1, bal*1.1f);//242
+        b.setBalance(t1, bal*1.1f,b.getOwner());//242
         a.join(t1);
-        a.withdraw(t1, bal*0.1f);
+        a.withdraw(t1, bal*0.1f,a.getOwner());
         
         try{
             Thread.sleep(1000);
@@ -117,17 +157,21 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         }         
     }
     //UserInterface parameter
-    public static boolean transactionU(MyTransactor b, MyTransactor c) throws KeyException,BadAmount, RemoteException{
+    public static boolean transactionU(MyTransactor b, MyTransactor c) 
+            throws KeyException,BadAmount, UserException, RemoteException{
 
         //ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
+        System.out.println("Owner of b obj es UserID= "+b.getOwner().getUserId());
+        System.out.println("Owner of c obj es UserID= "+c.getOwner().getUserId());
         
         Key u1 = new Key();
         b.join(u1);
         
         float balance = b.balance(u1);//200
-        b.setBalance(u1, balance*1.1f); //220    
+        b.setBalance(u1, balance*1.1f,b.getOwner()); //220    
         c.join(u1);           
-        c.withdraw(u1, balance*0.1f);//20
+
+        c.withdraw(u1, balance*0.1f,c.getOwner());//20
         //UserIntercae remoteUser = bankB.getObject("bank2").login(1)
         //c.withdraw(u1, balance*0.1f, remoteUser);//20
 
@@ -161,16 +205,27 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         System.out.println("NO ENTRO!! ");
         return null;
     }
+    public HashMap<String,UserInterface> getUserList() {
+        return userList;
+    }
+    public ArrayList<MyTransactor> getAccounts(){
+        return lista;
+    }
+
     public static void main(String [] args) 
         throws RemoteException, NotBoundException, 
         InterruptedException, BadAmount, KeyException
     {
-        MyTransactor accountB = new MyBankAccount("B001",200);
+        UserInterface user = new User("B1-User");
+        MyTransactor accountB = new MyBankAccount("B001",user,200f);
 
         BankB bankB = new BankB();
         bankB.startServer("192.168.2.28", 1092);
         try{
+            bankB.bankBaseObject.getUserList().clear();
+            bankB.bankBaseObject.getAccounts().clear();
             bankB.bankBaseObject.addBankAccount(accountB);
+            bankB.bankBaseObject.addUser(user);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -187,6 +242,15 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         MyTransactor b = bankB.getObject("local").browse("B001");
         MyTransactor a = bankB.getObject("bank1").browse("A001"); //A
         MyTransactor c = bankB.getObject("bank2").browse("C001"); //C
+        //----------------------------------------------------------------
+        // UserInterface userOfB = b.getOwner();
+        // UserInterface userOfA = a.getOwner();
+        // UserInterface userOfC = c.getOwner();
+        
+        // System.out.println("User ID = "+userOfA.getUserId());
+        // System.out.println("User ID = "+userOfB.getUserId());
+        // System.out.println("User ID = "+userOfC.getUserId());
+        
         //UserInterface remoteUser = bankB.getObject("bank2").login(1) 
         
         // if(a == null || b == null || c == null){
@@ -194,14 +258,13 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         // }
         if(a == null){ 
             System.out.println("ERROR NULL object A");
-            
+            return;
         }
         if(b == null){ 
             System.out.println("ERROR NULL object B");
         }
         if(c == null){ 
             System.out.println("ERROR NULL object C");
-        
         }
 
         Thread tT = new Thread(new Runnable() {

@@ -9,9 +9,48 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BankC extends UnicastRemoteObject implements BankInterface{
 	private ArrayList<MyTransactor> lista= new ArrayList<MyTransactor>();
+    private HashMap<String,UserInterface> userList = new HashMap<String,UserInterface>();
+    //---------------------------------------------------------------------------------
+    @Override
+    public UserInterface login(String userID){
+        if(!userList.containsKey(userID)){
+            try{
+                throw  new Exception("Usuario no esta en HashMap userList");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        UserInterface tmp = userList.get(userID);
+        return tmp;    
+    }
+    
+    public void addUser(UserInterface user) throws RemoteException{
+        
+        if(user.getUserId() != null){
+            if(userList.containsKey(user.getUserId())){
+                try{
+                    throw  new Exception("La clave "+user.getUserId() + " ya existe!!, cree una nueva");
+                }catch(Exception e){
+                    e.printStackTrace();
+                }            
+                return;
+            }
+            System.out.println("Nuevo usuario agregado UserID= "+user.getUserId());
+            userList.put(user.getUserId(), user);
+            return;
+        }
+        
+        try{
+            throw  new Exception("Usuario no tiene UserID es NULL");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private Registry baseServer;
 	private Registry firstRemoteServer;
@@ -26,7 +65,6 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
 		super();
         // lista = new ArrayList<MyTransactor>();
     }
- 
 	
     public void startServer(String ip, int port) {
         try {
@@ -103,15 +141,30 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
         System.out.println("No se encontro "+accountID+"\n");
 		return null;
 	}
-    public static void main(String args[])throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
-        MyTransactor testAccount = new MyBankAccount("C001",300f);        
+    public HashMap<String,UserInterface> getUserList() {
+        return userList;
+    }
+    public ArrayList<MyTransactor> getAccounts(){
+        return lista;
+    }
+    public static void main(String args[])
+            throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException 
+    {
+        BankC bankC = new BankC();        
         
-        BankC bankC = new BankC();
+
+        UserInterface user = new User("C1-User");
+        MyTransactor testAccount = new MyBankAccount("C001",user,300f);        
+        
+
         bankC.startServer("192.168.2.28", 1093);
+        //REMOVE ALL content before started
+        bankC.bankBaseObject.getUserList().clear();
+        bankC.bankBaseObject.getAccounts().clear();
 
         //add remote object transactor to account list objects
         bankC.bankBaseObject.addBankAccount(testAccount);
-
+        bankC.bankBaseObject.addUser(user);
         
         Thread.sleep(10000);//"192.168.2.28", 1091, "192.168.2.28", 1092
 

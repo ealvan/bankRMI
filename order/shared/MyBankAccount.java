@@ -12,6 +12,8 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
     private float workingBalance = 0.0f;    
     private KeyInterface KeyValue = null;
     private String accountID = null;
+    private UserInterface owner;
+
 
     public MyBankAccount() throws RemoteException {
         super();
@@ -20,6 +22,16 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
         super();
         this.accountID = accountID;
     }
+
+    //OFFICE CTOR ------------------------------------------------------------------------------
+    public MyBankAccount(String accountID,UserInterface user, float balance) throws RemoteException {
+        super();
+        this.accountID = accountID;
+        this.balance = balance;
+        this.owner = user;
+    }
+    //------------------------------------------------------------------------------
+
     public MyBankAccount(String accountID,float balance) throws RemoteException {
         super();
         this.accountID = accountID;
@@ -57,24 +69,57 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
  
         workingBalance += amount;
     }
-    @Override
-    public synchronized void setBalance(KeyInterface key, float amount)
-      throws BadAmount, KeyException, RemoteException
-    {
-        if( key.getId() != KeyValue.getId() )
-            throw new KeyException();
+    // @Override
+    // public synchronized void setBalance(KeyInterface key, float amount)
+    //   throws BadAmount, KeyException, RemoteException
+    // {
+    //     if( key.getId() != KeyValue.getId() )
+    //         throw new KeyException();
 
-        if( workingBalance < -amount )
-            throw new BadAmount();
+    //     if( workingBalance < -amount )
+    //         throw new BadAmount();
  
-        workingBalance = amount;
-    }
-    @Override
-    public synchronized void withdraw(KeyInterface key, float amount)
-      throws BadAmount, KeyException, RemoteException
-    {
-        deposit(key, -amount);
-    }//
+    //     workingBalance = amount;
+    // }
+    // @Override
+    // public synchronized void withdraw(KeyInterface key, float amount)
+    //   throws BadAmount, KeyException, RemoteException
+    // {
+    //     deposit(key, -amount);
+    // }//
+    public synchronized void setBalance(KeyInterface key, float amount, UserInterface user)
+    throws BadAmount, KeyException, RemoteException, UserException
+  {
+    System.out.println(
+      "\nthis.owner.getUserID() = "+this.owner.getUserId()
+      +"\nuser.getUserId() = "+user.getUserId()+"\n");
+    
+      if(user.getUserId().equals(this.owner.getUserId()) == false)
+      {
+          System.out.println(this.owner.getUserId()+"<--->"+user.getUserId()+"***\n");
+            throw new UserException();
+      }
+    
+      if( key.getId() != KeyValue.getId() )
+          throw new KeyException();
+
+      if( workingBalance < -amount )
+          throw new BadAmount();
+
+      workingBalance = amount;
+  }
+
+  public synchronized void withdraw(KeyInterface key, float amount, UserInterface user)
+    throws BadAmount, KeyException, UserException, RemoteException
+  {
+      if(user.getUserId().equals(owner.getUserId()) == false)
+          throw new UserException();
+
+      // if( key.getId() != KeyValue.getId() )
+      //     throw new KeyException();
+    
+      deposit(key, -amount);
+  }//
     @Override
     public void join(KeyInterface key) 
       throws KeyException, RemoteException
@@ -174,6 +219,10 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
 		KeyInterface ret = new Key();
 		return ret;
 	}
+	@Override
+  public UserInterface getOwner() throws RemoteException{
+    return owner;
+  }
 
 	@Override
 	public float getBalance() throws KeyException, RemoteException {
