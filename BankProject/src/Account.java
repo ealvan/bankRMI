@@ -5,16 +5,24 @@ import java.rmi.server.UnicastRemoteObject;
 
 
 
-public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
+public class Account extends UnicastRemoteObject implements AccountInterface{
 
 
 	private float balance = 0.0f;
     private float workingBalance = 0.0f;    
     private KeyInterface KeyValue = null;
     private String accountID;
+    private UserInterface owner;
 
-    public MyBankAccount() throws RemoteException {
+    public Account() throws RemoteException {
         super();
+    }
+    
+    public Account(UserInterface uOwner, String ID, float actualBalance) throws RemoteException {
+        super();
+        owner = uOwner;
+        accountID = ID;
+        balance = actualBalance;
     }
     
     public void setValue(float a) 
@@ -44,9 +52,12 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
         workingBalance += amount;
     }
 
-    public synchronized void setBalance(KeyInterface key, float amount)
-      throws BadAmount, KeyException, RemoteException
+    public synchronized void setBalance(KeyInterface key, float amount, UserInterface user)
+      throws BadAmount, KeyException, RemoteException, UserException
     {
+    	if( user.getId() != owner.getId())
+    		throw new UserException();
+    	
         if( key.getId() != KeyValue.getId() )
             throw new KeyException();
 
@@ -56,9 +67,12 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
         workingBalance = amount;
     }
 
-    public synchronized void withdraw(KeyInterface key, float amount)
-      throws BadAmount, KeyException, RemoteException
+    public synchronized void withdraw(KeyInterface key, float amount, UserInterface user)
+      throws BadAmount, KeyException, RemoteException, UserException
     {
+    	if( user.getId() != owner.getId())
+    		throw new UserException();
+    	
         deposit(key, -amount);
     }//
 
@@ -123,7 +137,7 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
         try {
             System.setProperty("java.rmi.server.hostname","192.168.0.3");
             Registry a = LocateRegistry.createRegistry(1091);
-            MyBankAccount aux = new MyBankAccount();
+            Account aux = new Account();
             aux.setValue(100f);
             a.bind("Asd", aux);     
             
@@ -152,8 +166,8 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
 	}
 
 	@Override
-	public MyTransactor getObject() throws RemoteException {
-		MyTransactor aux = new MyBankAccount();
+	public AccountInterface getObject() throws RemoteException {
+		AccountInterface aux = new Account();
 		return aux;
 	}
 
