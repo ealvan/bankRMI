@@ -70,10 +70,11 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
         return null;
 
     }
+
     public void addBankAccount(MyTransactor transactor) throws RemoteException{
         if(transactor.getAccountID() != null){
             System.out.println("Nuevo transactor con AccountID agregado AccountID="+transactor.getAccountID());
-            this.bankBaseObject.lista.add(transactor);
+            this.lista.add(transactor);
             return;
         }
 
@@ -95,7 +96,7 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
 		for (int i = 0; i<this.lista.size(); i++) {
             // System.out.println("ACCOUNT ID : "+this.lista.get(i).getAccountID()+"\n");
 			if(this.lista.get(i).getAccountID().equals(accountID)) {
-                System.out.println("Se encontro!! en browse C AccountID=" +this.lista.get(i).getAccountID());
+                System.out.println("Se encontro!! en browse C AccountID="  +this.lista.get(i).getAccountID()+"\n");
 				return this.lista.get(i);
 			};
 		}
@@ -103,13 +104,13 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
 		return null;
 	}
     public static void main(String args[])throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
-        // MyTransactor testAccount = new MyBankAccount("C001",300f);        
+        MyTransactor testAccount = new MyBankAccount("C001",300f);        
         
         BankC bankC = new BankC();
         bankC.startServer("192.168.2.28", 1093);
 
         //add remote object transactor to account list objects
-        bankC.addBankAccount((MyTransactor)new MyBankAccount("C001",300f));
+        bankC.bankBaseObject.addBankAccount(testAccount);
 
         
         Thread.sleep(10000);//"192.168.2.28", 1091, "192.168.2.28", 1092

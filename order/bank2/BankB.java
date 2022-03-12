@@ -56,7 +56,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
     public void addBankAccount(MyTransactor transactor) throws Exception{
         if(transactor.getAccountID() != null){
             System.out.println("Nuevo transactor con AccountID agregado: "+transactor.getAccountID());
-            this.bankBaseObject.lista.add(transactor);//"importante!!"
+            this.lista.add(transactor);//"importante!!"
             return;
         }
 
@@ -80,7 +80,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
 		for (int i = 0; i<lista.size(); i++) {
             // System.out.println("ACCOUNT ID : "+lista.get(i).getAccountID()+"\n");
 			if(lista.get(i).getAccountID().equals(accountID)) {
-                System.out.println("Se encontro!! en browse B AccountID=" +lista.get(i).getAccountID());
+                System.out.println("Se encontro!! en browse B AccountID="  +this.lista.get(i).getAccountID()+"\n");
 				return lista.get(i);
 			};
 		}
@@ -114,8 +114,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
             a.abort(t1);
             b.abort(t1);
             return false;
-        } 
-        
+        }         
     }
 
     public static boolean transactionU(MyTransactor b, MyTransactor c) throws KeyException,BadAmount, RemoteException{
@@ -164,12 +163,12 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         throws RemoteException, NotBoundException, 
         InterruptedException, BadAmount, KeyException
     {
-        // MyTransactor accountB = new MyBankAccount("B001",200);
+        MyTransactor accountB = new MyBankAccount("B001",200);
 
         BankB bankB = new BankB();
         bankB.startServer("192.168.2.28", 1092);
         try{
-            bankB.addBankAccount((MyTransactor)new MyBankAccount("B001",200));
+            bankB.bankBaseObject.addBankAccount(accountB);
         }catch(Exception e){
             e.printStackTrace();
         }

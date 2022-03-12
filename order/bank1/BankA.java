@@ -56,8 +56,8 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
 
     public void addBankAccount(MyTransactor transactor) throws RemoteException{
         if(transactor.getAccountID() != null){
-            System.out.println("Nuevo transactor con AccountID agregado "+transactor.getAccountID());
-            this.bankBaseObject.lista.add(transactor);
+            System.out.println("Transactor AccountID agregado: "+transactor.getAccountID());
+            this.lista.add(transactor);
             return;
         }
 
@@ -79,7 +79,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
 		for (int i = 0; i<lista.size(); i++) {
             // System.out.println("ACCOUNT ID : "+lista.get(i).getAccountID()+"\n");
 			if(lista.get(i).getAccountID().equals(accountID)) {
-                System.out.println("Se encontro!! en browse A AccountID=" +lista.get(i).getAccountID());
+                System.out.println("Se encontro!! en browse A AccountID=" +this.lista.get(i).getAccountID()+"\n");
 				return lista.get(i);
 			};
 		}
@@ -108,7 +108,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         bankA.startServer("192.168.2.28", 1091);
 
         //add remote object transactor to account list objects
-        bankA.addBankAccount(testAccount);
+        bankA.bankBaseObject.addBankAccount(testAccount);
 
 
         Thread.sleep(10000);
