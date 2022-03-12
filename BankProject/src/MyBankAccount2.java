@@ -5,7 +5,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 
 
-public class MyBankAccount2 extends UnicastRemoteObject implements MyTransactor{
+public class MyBankAccount2 extends UnicastRemoteObject implements AccountInterface{
 
 
 	private float balance = 0.0f;
@@ -152,8 +152,8 @@ public class MyBankAccount2 extends UnicastRemoteObject implements MyTransactor{
 	}
 
 	@Override
-	public MyTransactor getObject() throws RemoteException {
-		MyTransactor aux = new MyBankAccount2();
+	public AccountInterface getObject() throws RemoteException {
+		AccountInterface aux = new MyBankAccount2();
 		return aux;
 	}
 	

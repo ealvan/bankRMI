@@ -8,20 +8,55 @@ import java.util.ArrayList;
 
 public class Bank extends UnicastRemoteObject implements BankInterface {
 	
-	public Bank() throws RemoteException {
+	public Bank() throws RemoteException, BadAmount, KeyException, UserException {
 		super();
-		aux1 = new MyBankAccount(); 
-		aux1.setValue(100);
-		//MyTransactor a = firstBankRemoteObject.getObject();
-		// TODO Auto-generated constructor stub
-	}
-	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
+		dataTest();
+		System.out.println("bruh!");
 
+	}
+
+	private ArrayList<AccountInterface> AccountList = new ArrayList<AccountInterface>();
+	private ArrayList<UserInterface> UserList = new ArrayList<UserInterface>();
+
+	public UserInterface login(int id) throws RemoteException{
+		for (int i = 0; i<AccountList.size(); i++) {
+			if(UserList.get(i).getId() == id) {
+				return UserList.get(i);
+			};
+		}
+		return null;
+	}
+	
+	public void dataTest() throws RemoteException, BadAmount, KeyException, UserException {
+		//Leer el archivo
+		UserList.add(null);
+		UserList.add(new User(1));
+		UserList.add(new User(2));
+		UserList.add(new User(3));
+		
+		AccountList.add(new Account(UserList.get(1),"A0001",100f));//0
+		AccountList.add(new Account(UserList.get(2),"A0002",200f));//1
+		AccountList.add(new Account(UserList.get(2),"A0003",100f));
+		AccountList.add(new Account(UserList.get(3),"A0004",100f));
+		AccountList.add(new Account(UserList.get(3),"A0005",100f));
+		AccountList.add(new Account(UserList.get(3),"A0006",100f));
+		
+		
+		Key u1 = new Key();
+		System.out.println(u1);
+		
+		System.out.println("Tama�o " + AccountList.size());
+		AccountList.get(1).join(u1);
+		AccountList.get(1).withdraw(u1, 10f, UserList.get(2));
+		
+		
+	}
+	
 	@Override
-	public MyTransactor browse(String accountID) throws RemoteException {
-		for (int i = 0; i<lista.size(); i++) {
-			if(lista.get(i).getID().equals(accountID)) {
-				return lista.get(i);
+	public AccountInterface browse(String accountID) throws RemoteException {
+		for (int i = 0; i<AccountList.size(); i++) {
+			if(AccountList.get(i).getID().equals(accountID)) {
+				return AccountList.get(i);
 			};
 		}
 		return null;
@@ -83,9 +118,9 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
             e.printStackTrace();
         }
 	}
-	static MyTransactor aux1;
+	static AccountInterface aux1;
 	public static void assignServer(String firstServerIP, int firstPort, String secondServerIP, int secondPort) throws RemoteException, NotBoundException {
-		MyTransactor ad;
+		AccountInterface ad;
 		firstRemoteServer = LocateRegistry.getRegistry(firstServerIP,firstPort);
 		secondRemoteServer = LocateRegistry.getRegistry(secondServerIP,secondPort);
 		firstBankRemoteObject = (BankInterface) firstRemoteServer.lookup("Bank");
@@ -100,24 +135,29 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 	
 	
 	@Override
-	public MyTransactor returnObjectTest() throws RemoteException {
+	public AccountInterface returnObjectTest() throws RemoteException {
 		return aux1;
 	}
 	
 	@Override
 	public BankInterface getObject() throws RemoteException {
 		System.out.println("entro aca");
-		BankInterface aux = new Bank();
-		return aux;
+		//BankInterface aux = new Bank();
+		return null;
 	}
 	
 	
-	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
+	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException, UserException {
+		Bank a = new Bank();
 		
-        startServer("192.168.2.28", 1091);
-        
-		Thread.sleep(10000);
-		assignServer("192.168.2.28", 1092, "192.168.2.28", 1093);
+//        startServer("192.168.0.3", 1091);
+//        
+//		Thread.sleep(10000);
+//		assignServer("192.168.0.3", 1092, "192.168.0.3", 1093);
+		
+		
+		
+		
 //		Registry reg_host2 = LocateRegistry.getRegistry("192.168.0.3",1092);
 //		BankInterface  b = (BankInterface) reg_host2.lookup("Asd");
 //		BankInterface x = b.getObject();

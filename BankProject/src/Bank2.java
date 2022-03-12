@@ -10,16 +10,16 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 	
 	public Bank2() throws RemoteException {
 		super();
-		aux1 = new MyBankAccount(); 
+		aux1 = new Account(); 
 		aux1.setValue(200);
 		//MyTransactor a = firstBankRemoteObject.getObject();
 		// TODO Auto-generated constructor stub
 	}
 
-	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
+	private ArrayList<AccountInterface> lista = new ArrayList<AccountInterface>();
 
 	@Override
-	public MyTransactor browse(String accountID) throws RemoteException {
+	public AccountInterface browse(String accountID) throws RemoteException {
 		for (int i = 0; i<lista.size(); i++) {
 			if(lista.get(i).getID().equals(accountID)) {
 				return lista.get(i);
@@ -29,7 +29,7 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 	}
 	
 	
-	public static boolean transactionT(MyTransactor a, MyTransactor b) throws KeyException,BadAmount, RemoteException{
+	public static boolean transactionT(AccountInterface a, AccountInterface b) throws KeyException,BadAmount, RemoteException{
 
 	    //ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
 		
@@ -57,7 +57,7 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
         
 	}
 	
-	public static boolean transactionU(MyTransactor b, MyTransactor c) throws KeyException,BadAmount, RemoteException{
+	public static boolean transactionU(AccountInterface b, AccountInterface c) throws KeyException,BadAmount, RemoteException{
 
 	    //ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
 		
@@ -111,9 +111,9 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
             e.printStackTrace();
         }
 	}
-	static MyTransactor aux1;
+	static AccountInterface aux1;
 	public static void assignServer(String firstServerIP, int firstPort, String secondServerIP, int secondPort) throws RemoteException, NotBoundException {
-		MyTransactor ad;
+		AccountInterface ad;
 		firstRemoteServer = LocateRegistry.getRegistry(firstServerIP,firstPort);
 		secondRemoteServer = LocateRegistry.getRegistry(secondServerIP,secondPort);
 		firstBankRemoteObject = (BankInterface) firstRemoteServer.lookup("Bank");
@@ -128,7 +128,7 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 	
 
 	@Override
-	public MyTransactor returnObjectTest() throws RemoteException {
+	public AccountInterface returnObjectTest() throws RemoteException {
 		return aux1;
 	}
 	
@@ -139,7 +139,9 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 		return aux;
 	}
 	
-	
+	public static void print(AccountInterface a,AccountInterface b,AccountInterface c) throws RemoteException, KeyException{
+        System.out.println(" Valores en orden\nA: " + a.getBalance() + " B: " + b.getBalance() + " C: " + c.getBalance());
+    }
 	
 	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
 		
@@ -149,9 +151,9 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 		assignServer("192.168.2.28", 1091, "192.168.2.28", 1093);
 		System.out.println("Llamada Simple: ");
 		
-		MyTransactor b = bankBaseObject.returnObjectTest();
-		MyTransactor a = firstBankRemoteObject.returnObjectTest(); //A
-		MyTransactor c = secondBankRemoteObject.returnObjectTest(); //C
+		AccountInterface b = bankBaseObject.returnObjectTest();
+		AccountInterface a = firstBankRemoteObject.returnObjectTest(); //A
+		AccountInterface c = secondBankRemoteObject.returnObjectTest(); //C
 		
 
         Thread tT = new Thread(new Runnable() {

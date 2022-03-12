@@ -6,7 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-class MyBankAccount3 extends UnicastRemoteObject implements MyTransactor{
+class MyBankAccount3 extends UnicastRemoteObject implements AccountInterface{
 
   //private String username, password;
 
@@ -128,7 +128,7 @@ class MyBankAccount3 extends UnicastRemoteObject implements MyTransactor{
 	}
 
 	@Override
-	public MyTransactor getObject() throws RemoteException {
+	public AccountInterface getObject() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -155,17 +155,17 @@ public class Cliente {
 
         
         
-        MyTransactor a = (MyTransactor) reg_host.lookup("Asd");
-        MyTransactor  b = (MyTransactor) reg_host2.lookup("Asd");
-        MyTransactor aux = new MyBankAccount3();
+        AccountInterface a = (AccountInterface) reg_host.lookup("Asd");
+        AccountInterface  b = (AccountInterface) reg_host2.lookup("Asd");
+        AccountInterface aux = new MyBankAccount3();
   
         
         Key t1 = new Key();
-        MyTransactor x = a.getObject();
+        AccountInterface x = a.getObject();
         System.out.println(x);
         a.getObjectKey();
         
-        ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
+        ArrayList<AccountInterface> lista = new ArrayList<AccountInterface>();
         lista.add(a);
         lista.add(b);
         lista.add(aux);

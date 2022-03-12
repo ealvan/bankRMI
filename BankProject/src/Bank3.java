@@ -11,16 +11,22 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 	public Bank3() throws RemoteException {
 		super();
 		System.out.println("Datoooo: ");
-		aux2 = new MyBankAccount(); 
+		aux2 = new Account(); 
 		System.out.println("aux 2  es " + aux2);
 		aux2.setValue(300);
 		// TODO Auto-generated constructor stub
 	}
-	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
+	private ArrayList<AccountInterface> lista = new ArrayList<AccountInterface>();
 
-	//,password,username
-	// 
-	
+	@Override
+	public AccountInterface browse(String accountID) throws RemoteException {
+		for (int i = 0; i<lista.size(); i++) {
+			if(lista.get(i).getID().equals(accountID)) {
+				return lista.get(i);
+			};
+		}
+		return null;
+	}
 	
 	public void LeerArchivo() {
 		
@@ -87,7 +93,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
             e.printStackTrace();
         }
 	}
-	static MyTransactor aux2;
+	static AccountInterface aux2;
 	public static void assignServer(String firstServerIP, int firstPort, String secondServerIP, int secondPort) throws RemoteException, NotBoundException {
 		firstRemoteServer = LocateRegistry.getRegistry(firstServerIP,firstPort);
 		secondRemoteServer = LocateRegistry.getRegistry(secondServerIP,secondPort);
@@ -103,7 +109,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 	
 	
 	@Override
-	public MyTransactor returnObjectTest() throws RemoteException {
+	public AccountInterface returnObjectTest() throws RemoteException {
 		System.out.println("Bruh");
 		System.out.println(aux2);
 		return aux2;
