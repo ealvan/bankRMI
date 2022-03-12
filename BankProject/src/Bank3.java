@@ -15,15 +15,6 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
 
 	//,password,username
-	@Override
-	public MyTransactor browse(String accountID) throws RemoteException {
-		for (int i = 0; i<lista.size(); i++) {
-			if(lista.get(i).getID().equals(accountID)) {
-				return lista.get(i);
-			};
-		}
-		return null;
-	}
 	// 
 	
 	
@@ -67,6 +58,15 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 	private static BankInterface secondBankRemoteObject;
 	
 	
+	@Override
+	public MyTransactor browse(String accountID) throws RemoteException {
+		for (int i = 0; i<lista.size(); i++) {
+			if(lista.get(i).getID().equals(accountID)) {
+				return lista.get(i);
+			};
+		}
+		return null;
+	}
 	public static void startServer(String ip, int port) {
         try {
             System.setProperty("java.rmi.server.hostname",ip);
@@ -80,7 +80,10 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
         }
 	}
 	static MyTransactor aux1;
-	public static void assignServer(String firstServerIP, int firstPort, String secondServerIP, int secondPort) throws RemoteException, NotBoundException {
+	public static void assignServer(String firstServerIP, int firstPort, String secondServerIP, int secondPort) 
+			throws RemoteException, NotBoundException {
+		
+		
 		MyTransactor ad;
 		firstRemoteServer = LocateRegistry.getRegistry(firstServerIP,firstPort);
 		secondRemoteServer = LocateRegistry.getRegistry(secondServerIP,secondPort);
@@ -108,9 +111,10 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 		BankInterface aux = new Bank2();
 		return aux;
 	}
+
 	
-	
-	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
+	public static void main(String [] args) 
+			throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
 		
         startServer("192.168.2.28", 1093);
         

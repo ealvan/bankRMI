@@ -82,7 +82,9 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
         
 	}
 	
-	
+    public static void print(MyTransactor a,MyTransactor b,MyTransactor c) throws RemoteException, KeyException{
+        System.out.println(" Valores en orden\nA: " + a.getBalance() + " B: " + b.getBalance() + " C: " + c.getBalance());
+    }
 	
 	
 	private static Registry baseServer;
@@ -93,7 +95,7 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 	private static BankInterface firstBankRemoteObject;
 	private static BankInterface secondBankRemoteObject;
 	
-	
+
 	public static void startServer(String ip, int port) {
         try {
             System.setProperty("java.rmi.server.hostname",ip);
@@ -136,9 +138,7 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 		return aux;
 	}
 	
-	public static void print(MyTransactor a,MyTransactor b,MyTransactor c) throws RemoteException, KeyException{
-        System.out.println(" Valores en orden\nA: " + a.getBalance() + " B: " + b.getBalance() + " C: " + c.getBalance());
-    }
+	
 	
 	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
 		
