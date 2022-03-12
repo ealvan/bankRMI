@@ -1,7 +1,7 @@
 package bank2;
 
 import shared.*;
-
+import shared.Key;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

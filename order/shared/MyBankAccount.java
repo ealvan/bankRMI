@@ -1,5 +1,5 @@
-package bank3;
-import shared.*;
+package shared;
+// import shared.*;
 
 import java.rmi.RemoteException;
 // import java.rmi.registry.LocateRegistry;
