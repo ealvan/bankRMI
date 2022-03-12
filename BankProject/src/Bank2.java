@@ -142,10 +142,10 @@ public class Bank2 extends UnicastRemoteObject implements BankInterface {
 	
 	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
 		
-        startServer("192.168.0.3", 1092);
+        startServer("192.168.2.28", 1092);
         
 		Thread.sleep(10000);
-		assignServer("192.168.0.3", 1091, "192.168.0.3", 1093);
+		assignServer("192.168.2.28", 1091, "192.168.2.28", 1093);
 		System.out.println("Llamada Simple: ");
 		
 		MyTransactor b = bankBaseObject.returnObjectTest();

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 class MyBankAccount3 extends UnicastRemoteObject implements MyTransactor{
 
+  //private String username, password;
 
 	private float balance = 0.0f;
     private float workingBalance = 0.0f;    
@@ -148,7 +149,6 @@ class MyBankAccount3 extends UnicastRemoteObject implements MyTransactor{
 
 
 public class Cliente {
- 
     public static void main (String[] args) throws MalformedURLException, RemoteException, NotBoundException, KeyException, BadAmount {
         Registry reg_host = LocateRegistry.getRegistry("192.168.0.3",1091);
         Registry reg_host2 = LocateRegistry.getRegistry("192.168.0.3",1092);

@@ -1,0 +1,10 @@
+Compile:
+java -d bin src/*.java
+
+Execute:
+java -classpath bin Bank
+java -classpath bin Bank2
+java -classpath bin Bank3
+Change IP:
+    192.168.2.28
+

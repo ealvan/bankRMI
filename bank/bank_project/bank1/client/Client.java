@@ -61,7 +61,7 @@ public class Client {
             };
             one.start();
             // client.startClient();
-            Thread.sleep(10000);
+            // Thread.sleep(10000);
             Bank bankB = client.getBank("B");
             bankB.shareObjects(client.getBank("A"), null);
             client.sayHello();
