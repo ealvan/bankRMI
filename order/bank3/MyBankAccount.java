@@ -160,9 +160,7 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
 
 	@Override
 	public String getID() throws RemoteException {
-		return accountID;
-		// TODO Auto-generated method stub
-		
+		  return accountID;
 	}
 
 	@Override
