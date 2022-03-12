@@ -8,7 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
 
 
-	private float balance = 0.0f;
+  	private float balance = 0.0f;
     private float workingBalance = 0.0f;    
     private KeyInterface KeyValue = null;
     private String accountID;
@@ -88,12 +88,11 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
        }
 
         KeyValue = key;    
-        workingBalance = balance;          
-       
+        workingBalance = balance;                 
     }
 
     public boolean canCommit(KeyInterface key)
-      throws KeyException, RemoteException
+        throws KeyException, RemoteException
     {
         return( key.getId() == KeyValue.getId());
     }

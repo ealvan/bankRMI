@@ -18,15 +18,9 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 	}
 	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
 
-	@Override
-	public MyTransactor browse(String accountID) throws RemoteException {
-		for (int i = 0; i<lista.size(); i++) {
-			if(lista.get(i).getID().equals(accountID)) {
-				return lista.get(i);
-			};
-		}
-		return null;
-	}
+	//,password,username
+	// 
+	
 	
 	public void LeerArchivo() {
 		
@@ -72,6 +66,15 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 	private static BankInterface secondBankRemoteObject;
 	
 	
+	@Override
+	public MyTransactor browse(String accountID) throws RemoteException {
+		for (int i = 0; i<lista.size(); i++) {
+			if(lista.get(i).getID().equals(accountID)) {
+				return lista.get(i);
+			};
+		}
+		return null;
+	}
 	public static void startServer(String ip, int port) {
         try {
             System.setProperty("java.rmi.server.hostname",ip);
@@ -112,14 +115,15 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 		BankInterface aux = new Bank();
 		return aux;
 	}
+
 	
-	
-	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
+	public static void main(String [] args) 
+			throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
 		
-        startServer("192.168.0.3", 1093);
+        startServer("192.168.2.28", 1093);
         
 		Thread.sleep(10000);
-		assignServer("192.168.0.3", 1091, "192.168.0.3", 1092);
+		assignServer("192.168.2.28", 1091, "192.168.2.28", 1092);
 //		Registry reg_host2 = LocateRegistry.getRegistry("192.168.0.3",1092);
 //		BankInterface  b = (BankInterface) reg_host2.lookup("Asd");
 //		BankInterface x = b.getObject();

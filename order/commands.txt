@@ -1,0 +1,12 @@
+Compile Code:
+    javac -d bin bank1/*.java bank2/*.java bank3/*.java shared/*.java
+
+Execute Servers:
+    java -classpath bank1.BankA
+    java -classpath bank2.BankB
+    java -classpath bank3.BankC
+
+
+
+
+
