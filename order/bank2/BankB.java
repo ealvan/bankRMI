@@ -116,7 +116,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
             return false;
         }         
     }
-
+    //UserInterface parameter
     public static boolean transactionU(MyTransactor b, MyTransactor c) throws KeyException,BadAmount, RemoteException{
 
         //ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
@@ -128,6 +128,8 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         b.setBalance(u1, balance*1.1f); //220    
         c.join(u1);           
         c.withdraw(u1, balance*0.1f);//20
+        //UserIntercae remoteUser = bankB.getObject("bank2").login(1)
+        //c.withdraw(u1, balance*0.1f, remoteUser);//20
 
         try{
             Thread.sleep(1000);
@@ -185,6 +187,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         MyTransactor b = bankB.getObject("local").browse("B001");
         MyTransactor a = bankB.getObject("bank1").browse("A001"); //A
         MyTransactor c = bankB.getObject("bank2").browse("C001"); //C
+        //UserInterface remoteUser = bankB.getObject("bank2").login(1) 
         
         // if(a == null || b == null || c == null){
         //     System.out.println("ERROR NULL object in (a,b,c)");

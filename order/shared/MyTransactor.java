@@ -4,6 +4,7 @@ import java.rmi.Remote;
 
 import java.rmi.RemoteException;
 
+//ACCOUNT INTERFACE
 public interface MyTransactor extends Remote {
     public void deposit(KeyInterface key, float amount) throws BadAmount, KeyException, RemoteException;
     public void withdraw(KeyInterface key, float amount) throws BadAmount, KeyException, RemoteException;

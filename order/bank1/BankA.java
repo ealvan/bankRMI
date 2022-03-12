@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public class BankA extends UnicastRemoteObject implements BankInterface{
 	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
+	// private ArrayList<Account> userList = new ArrayList<Account>();
 
     private Registry baseServer;
 	private Registry firstRemoteServer;

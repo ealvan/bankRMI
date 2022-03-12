@@ -6,13 +6,14 @@ import java.rmi.RemoteException;
 // import java.rmi.registry.LocateRegistry;
 // import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-
+//account CLASS
 public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
 
   	private float balance = 0.0f;
     private float workingBalance = 0.0f;    
     private KeyInterface KeyValue = null;
     private String accountID = null;
+  //private UserInterface owner;
 
     public MyBankAccount() throws RemoteException {
         super();

@@ -151,10 +151,10 @@ public class Account extends UnicastRemoteObject implements AccountInterface{
     }
 
 	@Override
-	public void tryPass(KeyInterface key) throws RemoteException {
+	public void tryPass(KeyInterface key) 
+    throws RemoteException {
 		KeyValue = key;
 		System.out.println(KeyValue.getId());
-		
 	}
 
 	@Override

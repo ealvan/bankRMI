@@ -71,16 +71,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 	private static BankInterface firstBankRemoteObject;
 	private static BankInterface secondBankRemoteObject;
 	
-	
-	@Override
-	public MyTransactor browse(String accountID) throws RemoteException {
-		for (int i = 0; i<lista.size(); i++) {
-			if(lista.get(i).getID().equals(accountID)) {
-				return lista.get(i);
-			};
-		}
-		return null;
-	}
+
 	public static void startServer(String ip, int port) {
         try {
             System.setProperty("java.rmi.server.hostname",ip);
