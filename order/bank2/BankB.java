@@ -46,16 +46,16 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
 		firstBankRemoteObject = (BankInterface) firstRemoteServer.lookup("Bank");
 		secondBankRemoteObject = (BankInterface) secondRemoteServer.lookup("Bank");
 		System.err.println("Se completo carga de Bancos");
-		System.out.println(bankBaseObject);
-		System.out.println(firstBankRemoteObject);
-		System.out.println(secondBankRemoteObject);
+		// System.out.println(bankBaseObject);
+		// System.out.println(firstBankRemoteObject);
+		// System.out.println(secondBankRemoteObject);
 		//MyTransactor a = firstBankRemoteObject.getObject();
 		
 	}
 
     public void addBankAccount(MyTransactor transactor) throws Exception{
         if(transactor.getAccountID() != null){
-            System.out.println("NUevo transactor con AccountID agregado "+transactor.getAccountID());
+            System.out.println("Nuevo transactor con AccountID agregado: "+transactor.getAccountID());
             this.bankBaseObject.lista.add(transactor);//"importante!!"
             return;
         }
@@ -67,7 +67,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         }
     }
     public static void print(MyTransactor a,MyTransactor b,MyTransactor c) throws RemoteException, KeyException{
-        System.out.println(" Valores en orden\nA: " + a.getBalance() + " B: " + b.getBalance() + " C: " + c.getBalance());
+        System.out.println("Lista de cuentas con sus Balances: \nA: " + a.getBalance() + " B: " + b.getBalance() + " C: " + c.getBalance());
     }
 //--------------------------IMPLEMENTS------------------------------------------------
     //retorna una Cuenta del Banco A
@@ -78,13 +78,13 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
             return null;
         }
 		for (int i = 0; i<lista.size(); i++) {
-            System.out.println("ACCOUNT ID : "+lista.get(i).getAccountID()+"\n");
+            // System.out.println("ACCOUNT ID : "+lista.get(i).getAccountID()+"\n");
 			if(lista.get(i).getAccountID().equals(accountID)) {
-                System.out.println("Se encontro!! en browse C " +lista.get(i));
+                System.out.println("Se encontro!! en browse B AccountID=" +lista.get(i).getAccountID());
 				return lista.get(i);
 			};
 		}
-        System.out.println("No se encontro "+accountID+"\n");
+        System.out.println("No se encontro AccountID="+accountID+"\n");
 		return null;
 	}
 
@@ -148,13 +148,13 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
     @Override
     public BankInterface getObject(String name){
         if(name.toLowerCase().equals("local")){
-            System.out.println("ENTRO!!" + bankBaseObject);
+            System.out.println("ENTRO! LOCAL");
             return bankBaseObject;
         }else if (name.toLowerCase().equals("bank1")){
-            System.out.println("ENTRO!! 1" + firstBankRemoteObject);
+            System.out.println("ENTRO! BANK1");
             return firstBankRemoteObject;
         }else if (name.toLowerCase().equals("bank2")){
-            System.out.println("ENTRO!! 2"+secondBankRemoteObject);
+            System.out.println("ENTRO! BANK2 ");
             return secondBankRemoteObject;            
         }
         System.out.println("NO ENTRO!! ");
@@ -254,6 +254,8 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
+        //------------------------
+        System.out.println("Balance : " + c.getBalance());
 
     }
 }
