@@ -1,10 +1,10 @@
 Compile Code:
-    javac -d bin bank1/*.java bank2/*.java bank3/*.java shared/*.java
+    javac -d bin bank1/*.java bank2/*.java bank3/*.java shared/*.java draft/*.java
 
 Execute Servers:
-    java -classpath bank1.BankA
-    java -classpath bank2.BankB
-    java -classpath bank3.BankC
+    java -classpath bin bank1.BankA
+    java -classpath bin bank2.BankB
+    java -classpath bin bank3.BankC
 
 dos txt:
     1: almacenar solo Usuarios(ID,Name)

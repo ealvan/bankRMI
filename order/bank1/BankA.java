@@ -51,7 +51,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         }
         
         try{
-            throw  new Exception("Usuario no tiene UserID es NULL");
+            throw  new Exception("Usuario tiene UserID es NULL");
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -153,8 +153,6 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
 
     public static void main(String args[])throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
         BankA bankA = new BankA();
-
-        
 
         UserInterface user = new User("A1-User");
         MyTransactor testAccount = new MyBankAccount("A001",user,100f);        

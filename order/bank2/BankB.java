@@ -140,7 +140,14 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         b.setBalance(t1, bal*1.1f,b.getOwner());//242
         a.join(t1);
         a.withdraw(t1, bal*0.1f,a.getOwner());
-        
+
+        // UserException nuevo;
+        // try{
+        //     a.withdraw(t1, bal*0.1f,a.getOwner());
+        // }catch(UserException e){
+        //     a.abort(t1);
+        // }
+
         try{
             Thread.sleep(1000);
         }catch(InterruptedException e){}
@@ -151,6 +158,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
             return true;
         }
         else {
+            
             a.abort(t1);
             b.abort(t1);
             return false;
@@ -242,6 +250,8 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         MyTransactor b = bankB.getObject("local").browse("B001");
         MyTransactor a = bankB.getObject("bank1").browse("A001"); //A
         MyTransactor c = bankB.getObject("bank2").browse("C001"); //C
+        UserInterface userC = bankB.getObject("bank2").login("C1-User");
+        System.out.println("User ID**** = "+userC.getUserId());
         //----------------------------------------------------------------
         // UserInterface userOfB = b.getOwner();
         // UserInterface userOfA = a.getOwner();
