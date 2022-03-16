@@ -155,6 +155,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         if( a.canCommit(t1) && b.canCommit(t1) ){
             a.commit(t1);
             b.commit(t1);
+            
             return true;
         }
         else {
@@ -326,6 +327,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         try {
             tT.join();
             tU.join();
+            // bankB.getObject("bank1").saveUserObjects();
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }

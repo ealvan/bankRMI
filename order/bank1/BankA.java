@@ -45,7 +45,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
                 // }catch(Exception e){
                 //     e.printStackTrace();
                 // }            
-                System.out.println("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
+                System.err.println("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
                 return;
             }
             System.out.println("Nuevo usuario agregado UserID= "+user.getUserId());
@@ -213,7 +213,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
 
         UserInterface user = new User("A1-User","pepe",22);
         MyTransactor testAccount = new MyBankAccount("A001",user,100f);
-        MyTransactor testAccount1 = new MyBankAccount("A0022",user,290f);
+        MyTransactor testAccount1 = new MyBankAccount("A002",user,290f);
         
         bankA.startServer("192.168.2.21", 1091);
         
@@ -237,6 +237,8 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
 
         bankA.assignServer("192.168.2.21", 1092, "192.168.2.21", 1093);
 
+        Thread.sleep(14000);
+        System.out.println("SAVE objects...");
         bankA.bankBaseObject.saveAccountObjects();
         bankA.bankBaseObject.saveUserObjects();
 

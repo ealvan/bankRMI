@@ -3,9 +3,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 class Client implements Serializable{
-    private String name=null;
-    private int age = -1;
-	private String userID = null;
+    public String name=null;
+    public int age = -1;
+	public String userID = null;
     Client(String name, int age){
         this.name = name;
         this.age = age;        
@@ -64,10 +64,10 @@ public class Storage {
         };        
         // Storage Storage = new Storage();
         Storage.saveObject(list, Storage.UserFile);
-
         ArrayList<Client> newList =(ArrayList<Client>) Storage.retrieveObject(Storage.UserFile);
 
         System.out.println(newList);
+
         HashMap<String,Client> map = new HashMap<String,Client>(){
             {
                 put("user1",new Client("user1","user1",2));
@@ -76,6 +76,8 @@ public class Storage {
                 put("user5",new Client("user5","user5",3));
             }
         };
+        map.get("user1").age = 1000;
+        map.get("user1").name="GIOVANNI GIORGIO";
         Storage.saveObject(map, Storage.UserFile);
         HashMap<String,Client> newMap =(HashMap<String,Client>) Storage.retrieveObject(Storage.UserFile);
 

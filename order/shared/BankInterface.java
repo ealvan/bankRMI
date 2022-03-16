@@ -8,5 +8,6 @@ public interface BankInterface extends Remote{
 	// public MyTransactor returnObjectTest() throws RemoteException;//hhi
 	public BankInterface getObject(String name) throws RemoteException;//
 	public UserInterface login(String userID) throws RemoteException;
-	
+	//public void saveUsersObjects() throws RemoteException;
+	//public void saveAccountsObjects() throws RemoteException;
 }
