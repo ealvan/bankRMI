@@ -53,6 +53,7 @@ public class Storage {
         }
         return null;
     }
+    @SuppressWarnings("unchecked")
     public static void main(String args[]){
         ArrayList<Client> list = new ArrayList<Client>() {
             {
