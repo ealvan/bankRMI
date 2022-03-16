@@ -59,7 +59,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 //		Key u1 = new Key();
 //		System.out.println(u1);
 //		
-//		System.out.println("Tamaño " + AccountList.size());
+//		System.out.println("Tamaï¿½o " + AccountList.size());
 //		AccountList.get(1).join(u1);
 //		AccountList.get(1).withdraw(u1, 10f, UserList.get(2));
 //		
@@ -288,7 +288,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 				
 				case 2: {
 					System.out.println("Usted Debe estar loguearse en el banco para realizar la transferencia");
-					System.out.println("Indique de que banco retirará (A) (B) (C)");
+					System.out.println("Indique de que banco retirarï¿½ (A) (B) (C)");
 					String bank = sc.next();
 					System.out.println("Indique el ID de usuario");
 					String userID = sc.next();
@@ -322,7 +322,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 				case 3: {
 					float auxVar = 0;
 					System.out.println("Usted Debe estar logueado para realizar el retiro");
-					System.out.println("Indique de que banco retirará (A) (B) (C)");
+					System.out.println("Indique de que banco retirarï¿½ (A) (B) (C)");
 					String bank = sc.next();
 					System.out.println("Indique el ID de usuario");
 					String userID = sc.next();
@@ -472,7 +472,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 		
         Bank3 bankC = new Bank3();
         
-        bankC.startServer("192.168.0.11", 1091);
+        bankC.startServer("192.168.2.21", 1093);
         
         // //REMOVE ALL content before started
         // bankA.bankBaseObject.getUserList().clear();
@@ -516,7 +516,7 @@ public class Bank3 extends UnicastRemoteObject implements BankInterface {
 
         Thread.sleep(15000);
         System.out.println("Se asignaran los otros servidores");
-        bankC.assignServer("192.168.0.3", 1091, "192.168.0.10", 1091);
+        bankC.assignServer("192.168.2.21", 1091, "192.168.2.21", 1092);
         
         bankC.Menu();
         Thread.sleep(20000);
