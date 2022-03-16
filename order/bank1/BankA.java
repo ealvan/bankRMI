@@ -162,6 +162,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         return lista;
     }
     //Retrieve Hashmap
+    @SuppressWarnings("unchecked")
     public void retrieveUserObjects(){
         File f = new File(Storage.UserFile);
         if(f.exists() && !f.isDirectory()){
@@ -171,6 +172,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         }
     }
     //Retrieve ArrayList
+    @SuppressWarnings("unchecked")
     public void retrieveAccountsObjects(){
         File f = new File(Storage.AccountFile);
         if(f.exists() && !f.isDirectory()){
