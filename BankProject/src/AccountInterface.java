@@ -24,4 +24,7 @@ interface AccountInterface extends Remote {
     public AccountInterface getObject() throws RemoteException;
     public KeyInterface getObjectKey() throws RemoteException;
     public float getBalance() throws KeyException, RemoteException;
+    
+    public String getAccountID() throws RemoteException;
+    public UserInterface getOwner() throws RemoteException;
 }

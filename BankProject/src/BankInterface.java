@@ -3,9 +3,7 @@ import java.rmi.RemoteException;
 
 interface BankInterface extends Remote{
 	public AccountInterface browse(String accountID) throws RemoteException;
-	public UserInterface login(int id) throws RemoteException;
-	public AccountInterface returnObjectTest() throws RemoteException;//hhi
-	public BankInterface getObject() throws RemoteException;//
-	
-	
+	// public MyTransactor returnObjectTest() throws RemoteException;//hhi
+	public BankInterface getObject(String name) throws RemoteException;//
+	public UserInterface login(String userID) throws RemoteException;
 }

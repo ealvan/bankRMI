@@ -11,8 +11,8 @@ public class Account extends UnicastRemoteObject implements AccountInterface{
 	private float balance = 0.0f;
     private float workingBalance = 0.0f;    
     private KeyInterface KeyValue = null;
-    private String accountID;
-    private UserInterface owner;
+    private String accountID = null;
+    private UserInterface owner = null;
 
     public Account() throws RemoteException {
         super();
@@ -55,9 +55,10 @@ public class Account extends UnicastRemoteObject implements AccountInterface{
     public synchronized void setBalance(KeyInterface key, float amount, UserInterface user)
       throws BadAmount, KeyException, RemoteException, UserException
     {
-    	if( user.getId() != owner.getId())
+    	if(user.getUserId().equals(this.owner.getUserId()) == false) {
+    		System.out.println(this.owner.getUserId()+"<--->"+user.getUserId()+"***\n");
     		throw new UserException();
-    	
+    	}
         if( key.getId() != KeyValue.getId() )
             throw new KeyException();
 
@@ -70,7 +71,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface{
     public synchronized void withdraw(KeyInterface key, float amount, UserInterface user)
       throws BadAmount, KeyException, RemoteException, UserException
     {
-    	if( user.getId() != owner.getId())
+    	if(user.getUserId().equals(owner.getUserId()) == false)
     		throw new UserException();
     	
         deposit(key, -amount);
@@ -181,6 +182,18 @@ public class Account extends UnicastRemoteObject implements AccountInterface{
 	public float getBalance() throws KeyException, RemoteException {
 		// TODO Auto-generated method stub
 		return balance;
+	}
+
+	@Override
+	public String getAccountID() throws RemoteException {
+		// TODO Auto-generated method stub
+		return accountID;
+	}
+
+	@Override
+	public UserInterface getOwner() throws RemoteException {
+		// TODO Auto-generated method stub
+		return owner;
 	}
 
 

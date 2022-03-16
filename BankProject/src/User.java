@@ -3,18 +3,37 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class User extends UnicastRemoteObject implements UserInterface{
 
-	int userID;
+	String userID;
+	String name = null;
+	int age = -1;
 	
-	protected User(int ID) throws RemoteException {
+	public User(String ID,String name) throws RemoteException {
+		super();
+		this.userID = ID;
+        this.name = name;
+	}
+    public User(String ID,String name, int age) throws RemoteException {
+		super();
+		this.userID = ID;
+        this.age = age;
+        this.name = name;
+	}
+	public User(String ID) throws RemoteException {
 		super();
 		userID = ID;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public int getId() throws RemoteException {
-		// TODO Auto-generated method stub
-		return userID;
+	public String getUserId() {
+		return this.userID;
+	}
+	@Override
+	public String getUsername() {
+		return this.name;
+	}
+    @Override
+	public int getAge() {
+		return this.age;
 	}
 
 }

@@ -1,3 +1,4 @@
+import java.io.*;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -5,6 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 
@@ -14,69 +16,192 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 	
 	public Bank() throws RemoteException, BadAmount, KeyException, UserException {
 		super();
-		dataTest();
+		//dataTest();
 		System.out.println("bruh!");
 
 	}
 
 	private ArrayList<AccountInterface> AccountList = new ArrayList<AccountInterface>();
-	private ArrayList<UserInterface> UserList = new ArrayList<UserInterface>();
+	private HashMap<String,UserInterface> userList = new HashMap<String,UserInterface>();
 
 	
-	public UserInterface login(int id) throws RemoteException{
-		if(id>=UserList.size()) {
-			return null;
-		}
-//		for (int i = 0; i<AccountList.size()+1; i++) {
-//			if(UserList.get(i).getId() == id) {
-//				return UserList.get(i);
-//			};
-//		}
-		return UserList.get(id);
+	public UserInterface login(String userID) throws RemoteException{
+        if(!userList.containsKey(userID)){
+            try{
+                throw  new Exception("Usuario no esta en HashMap userList");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+        UserInterface tmp = userList.get(userID);
+        return tmp;
 	}
 	
-	public void dataTest() throws RemoteException, BadAmount, KeyException, UserException {
-		//Leer el archivo xdd
-		
-		
-		UserList.add(null);
-		UserList.add(new User(1));
-		UserList.add(new User(2));
-		UserList.add(new User(3));
-		
-		AccountList.add(new Account(UserList.get(1),"A0001",100f));//0
-		AccountList.add(new Account(UserList.get(2),"A0002",200f));//1
-		AccountList.add(new Account(UserList.get(2),"A0003",100f));
-		AccountList.add(new Account(UserList.get(3),"A0004",100f));
-		AccountList.add(new Account(UserList.get(3),"A0005",100f));
-		AccountList.add(new Account(UserList.get(3),"A0006",100f));
-		
-		
-		Key u1 = new Key();
-		System.out.println(u1);
-		
-		System.out.println("Tamaño " + AccountList.size());
-		AccountList.get(1).join(u1);
-		AccountList.get(1).withdraw(u1, 10f, UserList.get(2));
-		
-		
-	}
+//	public void dataTest() throws RemoteException, BadAmount, KeyException, UserException {
+//		//Leer el archivo xdd
+//		
+//		
+//		UserList.add(null);
+//		UserList.add(new User(1));
+//		UserList.add(new User(2));
+//		UserList.add(new User(3));
+//		
+//		AccountList.add(new Account(UserList.get(1),"A0001",100f));//0
+//		AccountList.add(new Account(UserList.get(2),"A0002",200f));//1
+//		AccountList.add(new Account(UserList.get(2),"A0003",100f));
+//		AccountList.add(new Account(UserList.get(3),"A0004",100f));
+//		AccountList.add(new Account(UserList.get(3),"A0005",100f));
+//		AccountList.add(new Account(UserList.get(3),"A0006",100f));
+//		
+//		
+//		
+//		
+//		
+//		Key u1 = new Key();
+//		System.out.println(u1);
+//		
+//		System.out.println("Tamaño " + AccountList.size());
+//		AccountList.get(1).join(u1);
+//		AccountList.get(1).withdraw(u1, 10f, UserList.get(2));
+//		
+//		
+//	}
 	
+    public void addUser(UserInterface user) throws RemoteException{
+        
+        if(user.getUserId() != null){
+            if(userList.containsKey(user.getUserId())){
+                // try{
+                //     throw  new Exception("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
+                // }catch(Exception e){
+                //     e.printStackTrace();
+                // }            
+                System.err.println("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
+                return;
+            }
+            System.out.println("Nuevo usuario agregado UserID= "+user.getUserId());
+            userList.put(user.getUserId(), user);
+            return;
+        }
+        
+        try{
+            throw  new Exception("Usuario tiene UserID es NULL");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void addBankAccount(AccountInterface transactor) throws RemoteException{
+
+        if(transactor.getAccountID() != null){
+            for(AccountInterface item : this.AccountList){
+                if(item.getAccountID().equals(transactor.getAccountID())){
+                    System.out.println("Cuenta AccountID="+item.getAccountID() +" ya existe,no agregada");
+                    return;
+                }
+            }
+            System.out.println("Transactor AccountID agregado: "+transactor.getAccountID());
+            this.AccountList.add(transactor);
+            return;
+        }
+
+        try{
+            throw new Exception("Transactor no tiene ID, no se le puede agregar al BANCO A");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    
 	@Override
 	public AccountInterface browse(String accountID) throws RemoteException {
+        if(AccountList.size() <= 0){
+            System.out.println("NO EXISTEN USUARIOS EN \"lista\"\n");
+            return null;
+        }
 		for (int i = 0; i<AccountList.size(); i++) {
-			if(AccountList.get(i).getID().equals(accountID)) {
+            // System.out.println("ACCOUNT ID : "+lista.get(i).getAccountID()+"\n");
+			if(AccountList.get(i).getAccountID().equals(accountID)) {
+                System.out.println("Se encontro!! en browse A AccountID=" +this.AccountList.get(i).getAccountID()+"\n");
 				return AccountList.get(i);
 			};
 		}
+        System.out.println("No se encontro AccountID= "+accountID+"\n");
 		return null;
 	}
 	
-	public void LeerArchivo() {
-		//
-		
-	}
+	@Override
+    public BankInterface getObject(String name){
+        if(name.toLowerCase().equals("local")){
+            System.out.println("ENTRO! LOCAL");
+            return bankBaseObject;
+        }else if (name.toLowerCase().equals("bank1")){
+            System.out.println("ENTRO! BANK1");
+            return firstBankRemoteObject;
+        }else if (name.toLowerCase().equals("bank2")){
+            System.out.println("ENTRO! BANK2 ");
+            return secondBankRemoteObject;            
+        }
+        System.out.println("NO ENTRO!! ");
+        return null;
+    }
 	
+	public HashMap<String,UserInterface> getUserList() {
+        return userList;
+    }
+    public ArrayList<AccountInterface> getAccounts(){
+        return AccountList;
+    }
+	
+    
+    @SuppressWarnings("unchecked")
+    public void retrieveUserObjects(){
+        File f = new File(Storage.UserFile);
+        if(f.exists() && !f.isDirectory()){
+            this.userList = (HashMap<String,UserInterface>)Storage.retrieveObject(Storage.UserFile);
+        }else{
+            this.userList = new HashMap<String,UserInterface>();
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void retrieveAccountsObjects(){
+        File f = new File(Storage.AccountFile);
+        if(f.exists() && !f.isDirectory()){
+            this.AccountList.addAll((ArrayList<AccountInterface>) Storage.retrieveObject(Storage.AccountFile));
+            // this.lista.addAll(this.lista);
+        }else{
+            this.AccountList = new ArrayList<AccountInterface>();
+        }
+    }
+    
+    public void saveUserObjects(){
+        Storage.saveObject(this.userList, Storage.UserFile);
+    }
+    public void saveAccountObjects(){
+        Storage.saveObject(this.AccountList, Storage.AccountFile);
+    }
+    
+    public void printUsers() throws RemoteException{
+        if(this.userList.isEmpty()){
+            System.out.println("Esta vacia el this.userLista");
+        }else
+        for(String key: this.userList.keySet()) {
+            UserInterface user = this.userList.get(key);
+            System.out.println(user.getUserId() + " --- " + user.getUsername());
+        }
+    }
+    
+    public void printAccounts() throws RemoteException,KeyException{
+        if(this.AccountList.isEmpty()){
+            System.out.println("Esta vacia el this.lista");
+        }else
+        for(AccountInterface item: this.AccountList){
+            System.out.println(item.getAccountID()+" --- "+item.getBalance());
+        }
+    }
+    
 	public static AccountInterface assignBrowse(String accountID) throws RemoteException {
 		if(accountID.startsWith("A")) {
 			return bankBaseObject.browse(accountID);
@@ -90,7 +215,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 		
 	}
 	
-	public static UserInterface assignLogin(String bankSel, int userID) throws RemoteException {
+	public static UserInterface assignLogin(String bankSel, String userID) throws RemoteException {
 		if(bankSel.equalsIgnoreCase("A")) {
 			return bankBaseObject.login(userID);
 		} else if (bankSel.equalsIgnoreCase("B")) {
@@ -156,7 +281,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 					System.out.println("Indique de que banco retirará (A) (B) (C)");
 					String bank = sc.next();
 					System.out.println("Indique el ID de usuario");
-					int userID = sc.nextInt();
+					String userID = sc.next();
 					userInTransaction = assignLogin(bank,userID);
 					
 					if(userInTransaction == null) {
@@ -173,7 +298,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 						System.out.println("Ingrese el monto a retirar");
 						cToWithdraw.withdraw(transactionIdentifier, sc.nextFloat(), userInTransaction);
 						System.out.println("Retiro realizado (Sigue usted en la transaccion)");
-					} catch (Exception e) {
+					} catch (KeyException e) {
 						System.out.println("Ocurrio algun error, vuelva a intentar");
 						cToWithdraw.abort(transactionIdentifier);
 					}
@@ -186,7 +311,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 					System.out.println("Indique de que banco retirará (A) (B) (C)");
 					String bank = sc.next();
 					System.out.println("Indique el ID de usuario");
-					int userID = sc.nextInt();
+					String userID = sc.next();
 					userInTransaction = assignLogin(bank,userID);
 					
 					if(userInTransaction == null) {
@@ -307,7 +432,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
             System.setProperty("java.rmi.server.hostname",ip);
             baseServer = LocateRegistry.createRegistry(port);
             bankBaseObject = new Bank();
-            baseServer.bind("Bank", bankBaseObject);      
+            baseServer.bind("Bank", bankBaseObject);
             System.err.println("Servidor A esta habilitado");
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
@@ -328,26 +453,64 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 
 		
 	}
-	
-	
-	@Override
-	public AccountInterface returnObjectTest() throws RemoteException {
-		return aux1;
-	}
-	
-	@Override
-	public BankInterface getObject() throws RemoteException {
-		System.out.println("entro aca");
-		//BankInterface aux = new Bank();
-		return null;
-	}
-	
-	
+	@SuppressWarnings("unchecked")
 	public static void main(String [] args) throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException, UserException {
-		startServer("192.168.0.3", 1091);
-		assignServer("192.168.0.3", 1092, "192.168.0.3", 1093);
+//		startServer("192.168.0.3", 1091);
+//		assignServer("192.168.0.3", 1092, "192.168.0.3", 1093);
+//		
+//		Menu();
 		
-		Menu();
+        Bank bankA = new Bank();
+        
+        Bank.startServer("192.168.0.3", 1091);
+        
+        // //REMOVE ALL content before started
+        // bankA.bankBaseObject.getUserList().clear();
+        // bankA.bankBaseObject.getAccounts().clear();
+        
+        bankA.bankBaseObject.retrieveAccountsObjects();
+        bankA.bankBaseObject.retrieveUserObjects();
+
+        //-------------------------------------------------------------------
+        bankA.bankBaseObject.printAccounts();
+        bankA.bankBaseObject.printUsers();
+        //-------------------------------------------------------------------
+        //add remote object transactor to account list objects
+        
+        UserInterface U1 = new User("U1","Pepe",22);
+        UserInterface U2 = new User("U2","Maria",22);
+        UserInterface U3 = new User("U3","Pablo",22);
+        UserInterface U4 = new User("U4","Luis",22);
+        
+        bankA.bankBaseObject.addUser(U1);
+        bankA.bankBaseObject.addUser(U2);
+        bankA.bankBaseObject.addUser(U3);
+        bankA.bankBaseObject.addUser(U4);
+        
+
+        bankA.bankBaseObject.addBankAccount(new Account(U1,"A001",100f));
+        bankA.bankBaseObject.addBankAccount(new Account(U1,"A002",100f));
+        bankA.bankBaseObject.addBankAccount(new Account(U1,"A003",100f));
+        
+        bankA.bankBaseObject.addBankAccount(new Account(U2,"A004",100f));
+        bankA.bankBaseObject.addBankAccount(new Account(U2,"A005",100f));
+        bankA.bankBaseObject.addBankAccount(new Account(U2,"A006",100f));
+        
+        bankA.bankBaseObject.addBankAccount(new Account(U3,"A007",100f));
+        bankA.bankBaseObject.addBankAccount(new Account(U3,"A008",100f));
+        bankA.bankBaseObject.addBankAccount(new Account(U3,"A009",100f));
+        //Cuando estes en B se pone un usuario con U3
+        
+        bankA.bankBaseObject.addBankAccount(new Account(U4,"A010",100f)); //Este U4 posee en los 3 bancos
+        
+
+        Thread.sleep(10000);
+        //bankA.assignServer("192.168.2.21", 1092, "192.168.2.21", 1093);
+
+        Thread.sleep(14000);
+        System.out.println("SAVE objects...");
+        bankA.bankBaseObject.saveAccountObjects();
+        bankA.bankBaseObject.saveUserObjects();
 		
 		
 		
