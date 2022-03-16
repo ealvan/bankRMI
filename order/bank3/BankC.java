@@ -157,7 +157,7 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
         MyTransactor testAccount = new MyBankAccount("C001",user,300f);        
         
 
-        bankC.startServer("192.168.2.28", 1093);
+        bankC.startServer("192.168.2.21", 1093);
         //REMOVE ALL content before started
         bankC.bankBaseObject.getUserList().clear();
         bankC.bankBaseObject.getAccounts().clear();
@@ -166,8 +166,8 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
         bankC.bankBaseObject.addBankAccount(testAccount);
         bankC.bankBaseObject.addUser(user);
         
-        Thread.sleep(10000);//"192.168.2.28", 1091, "192.168.2.28", 1092
+        Thread.sleep(10000);//"192.168.2.21", 1091, "192.168.2.21", 1092
 
-        bankC.assignServer("192.168.2.28", 1091, "192.168.2.28", 1092);
+        bankC.assignServer("192.168.2.21", 1091, "192.168.2.21", 1092);
     }
 }

@@ -12,6 +12,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.io.File;
+
 
 public class BankA extends UnicastRemoteObject implements BankInterface{
 	private ArrayList<MyTransactor> lista = new ArrayList<MyTransactor>();
@@ -38,11 +40,12 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         
         if(user.getUserId() != null){
             if(userList.containsKey(user.getUserId())){
-                try{
-                    throw  new Exception("La clave "+user.getUserId() + " ya existe!!, cree una nueva");
-                }catch(Exception e){
-                    e.printStackTrace();
-                }            
+                // try{
+                //     throw  new Exception("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
+                // }catch(Exception e){
+                //     e.printStackTrace();
+                // }            
+                System.out.println("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
                 return;
             }
             System.out.println("Nuevo usuario agregado UserID= "+user.getUserId());
@@ -98,7 +101,14 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
 	}
 
     public void addBankAccount(MyTransactor transactor) throws RemoteException{
+
         if(transactor.getAccountID() != null){
+            for(MyTransactor item : this.lista){
+                if(item.getAccountID().equals(transactor.getAccountID())){
+                    System.out.println("Cuenta AccountID="+item.getAccountID() +" ya existe,no agregada");
+                    return;
+                }
+            }
             System.out.println("Transactor AccountID agregado: "+transactor.getAccountID());
             this.lista.add(transactor);
             return;
@@ -109,6 +119,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         }catch(Exception e){
             e.printStackTrace();
         }
+
     }
 
 //--------------------------IMPLEMENTS------------------------------------------------
@@ -150,26 +161,83 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
     public ArrayList<MyTransactor> getAccounts(){
         return lista;
     }
-
-    public static void main(String args[])throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException {
+    //Retrieve Hashmap
+    public void retrieveUserObjects(){
+        File f = new File(Storage.UserFile);
+        if(f.exists() && !f.isDirectory()){
+            this.userList = (HashMap<String,UserInterface>)Storage.retrieveObject(Storage.UserFile);
+        }else{
+            this.userList = new HashMap<String,UserInterface>();
+        }
+    }
+    //Retrieve ArrayList
+    public void retrieveAccountsObjects(){
+        File f = new File(Storage.AccountFile);
+        if(f.exists() && !f.isDirectory()){
+            this.lista.addAll((ArrayList<MyTransactor>) Storage.retrieveObject(Storage.AccountFile));
+            // this.lista.addAll(this.lista);
+        }else{
+            this.lista = new ArrayList<MyTransactor>();
+        }
+    }    
+    public void saveUserObjects(){
+        Storage.saveObject(this.userList, Storage.UserFile);
+    }
+    public void saveAccountObjects(){
+        Storage.saveObject(this.lista, Storage.AccountFile);
+    }
+    public void printUsers() throws RemoteException{
+        if(this.userList.isEmpty()){
+            System.out.println("Esta vacia el this.userLista");
+        }else
+        for(String key: this.userList.keySet()) {
+            UserInterface user = this.userList.get(key);
+            System.out.println(user.getUserId() + " --- " + user.getUsername());
+        }
+    }
+    public void printAccounts() throws RemoteException,KeyException{
+        if(this.lista.isEmpty()){
+            System.out.println("Esta vacia el this.lista");
+        }else
+        for(MyTransactor item: this.lista){
+            System.out.println(item.getAccountID()+" --- "+item.getBalance());
+        }
+    }
+    public static void main(String args[])
+            throws RemoteException, NotBoundException, 
+                    InterruptedException, BadAmount, KeyException {
+        
         BankA bankA = new BankA();
 
-        UserInterface user = new User("A1-User");
-        MyTransactor testAccount = new MyBankAccount("A001",user,100f);        
+        UserInterface user = new User("A1-User","pepe",22);
+        MyTransactor testAccount = new MyBankAccount("A001",user,100f);
+        MyTransactor testAccount1 = new MyBankAccount("A0022",user,290f);
         
-        bankA.startServer("192.168.2.28", 1091);
+        bankA.startServer("192.168.2.21", 1091);
         
-        //REMOVE ALL content before started
-        bankA.bankBaseObject.getUserList().clear();
-        bankA.bankBaseObject.getAccounts().clear();
+        // //REMOVE ALL content before started
+        // bankA.bankBaseObject.getUserList().clear();
+        // bankA.bankBaseObject.getAccounts().clear();
         
+        bankA.bankBaseObject.retrieveAccountsObjects();
+        bankA.bankBaseObject.retrieveUserObjects();
+
+        //-------------------------------------------------------------------
+        bankA.bankBaseObject.printAccounts();
+        bankA.bankBaseObject.printUsers();
+        //-------------------------------------------------------------------
         //add remote object transactor to account list objects
         bankA.bankBaseObject.addBankAccount(testAccount);
+        bankA.bankBaseObject.addBankAccount(testAccount1);
         bankA.bankBaseObject.addUser(user);
 
         Thread.sleep(10000);
 
-        bankA.assignServer("192.168.2.28", 1092, "192.168.2.28", 1093);
+        bankA.assignServer("192.168.2.21", 1092, "192.168.2.21", 1093);
+
+        bankA.bankBaseObject.saveAccountObjects();
+        bankA.bankBaseObject.saveUserObjects();
+
 
         // Thread.sleep(7000);
 
@@ -190,10 +258,10 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
 }
 // 	public static void maissn(String [] args) {
 		
-//         startServer("192.168.2.28", 1091);
+//         startServer("192.168.2.21", 1091);
         
 // 		Thread.sleep(10000);
-// 		assignServer("192.168.2.28", 1092, "192.168.2.28", 1093);
+// 		assignServer("192.168.2.21", 1092, "192.168.2.21", 1093);
 // //		Registry reg_host2 = LocateRegistry.getRegistry("192.168.0.3",1092);
 // //		BankInterface  b = (BankInterface) reg_host2.lookup("Asd");
 // //		BankInterface x = b.getObject();

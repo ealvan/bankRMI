@@ -228,10 +228,10 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
         MyTransactor accountB = new MyBankAccount("B001",user,200f);
 
         BankB bankB = new BankB();
-        bankB.startServer("192.168.2.28", 1092);
+        bankB.startServer("192.168.2.21", 1092);
         try{
-            bankB.bankBaseObject.getUserList().clear();
-            bankB.bankBaseObject.getAccounts().clear();
+            // bankB.bankBaseObject.getUserList().clear();
+            // bankB.bankBaseObject.getAccounts().clear();
             bankB.bankBaseObject.addBankAccount(accountB);
             bankB.bankBaseObject.addUser(user);
         }catch(Exception e){
@@ -240,7 +240,7 @@ public class BankB extends UnicastRemoteObject implements BankInterface{
 
         
         Thread.sleep(10000);
-        bankB.assignServer("192.168.2.28", 1091, "192.168.2.28", 1093);
+        bankB.assignServer("192.168.2.21", 1091, "192.168.2.21", 1093);
         
         //----------------------------------------------------------------s
         System.out.println("Llamada Simple: ");
