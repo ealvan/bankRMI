@@ -12,17 +12,21 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
     private float workingBalance = 0.0f;    
     private KeyInterface KeyValue = null;
     private String accountID = null;
-    private UserInterface owner;
+    private UserInterface owner=null;
 
 
     public MyBankAccount() throws RemoteException {
         super();
+        KeyValue=null;
     }
     public MyBankAccount(String accountID) throws RemoteException {
         super();
         this.accountID = accountID;
     }
-
+    //CLEAR METHOD---------------------------------------
+    public void clear(){
+      this.KeyValue=null;
+    }
     //OFFICE CTOR ------------------------------------------------------------------------------
     public MyBankAccount(String accountID,UserInterface user, float balance) throws RemoteException {
         super();
@@ -90,9 +94,9 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
     public synchronized void setBalance(KeyInterface key, float amount, UserInterface user)
     throws BadAmount, KeyException, RemoteException, UserException
   {
-    System.out.println(
-      "\nthis.owner.getUserID() = "+this.owner.getUserId()
-      +"\nuser.getUserId() = "+user.getUserId()+"\n");
+    // System.out.println(
+    //   "\nthis.owner.getUserID() = "+this.owner.getUserId()
+    //   +"\nuser.getUserId() = "+user.getUserId()+"\n");
     
       if(user.getUserId().equals(this.owner.getUserId()) == false)
       {
@@ -124,14 +128,15 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
     public void join(KeyInterface key) 
       throws KeyException, RemoteException
     {
-    	System.out.println(key);
+
+    	// System.out.println("Join Operation with AccountID="+this.accountID);
         if( KeyValue != null ){
           int i = 15; //Intentos de preguntar
           boolean tiene = true;
           while (tiene && i-- > 0) { //Vuelvo a preguntar por 1 segundo
             if( KeyValue != null ){
               try{
-                System.out.println("Esperara 100 ms");
+                System.out.println("#"+i+": AccountID="+this.accountID+" esperara 100 ms ");
                 Thread.sleep(100);
               }catch(InterruptedException e){
                 e.printStackTrace();
@@ -142,13 +147,14 @@ public class MyBankAccount extends UnicastRemoteObject implements MyTransactor{
            
           }
           if(i <= 0){
+            System.out.println("AccountID="+this.accountID+" espero demasiado....");
             throw new KeyException();
           } 
        }
-
         KeyValue = key;    
         workingBalance = balance;                 
-    }
+        System.out.println("AccountID="+this.accountID+" hizo join correctamente");
+      }
     @Override
     public boolean canCommit(KeyInterface key)
         throws KeyException, RemoteException

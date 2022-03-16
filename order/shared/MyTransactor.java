@@ -17,6 +17,7 @@ public interface MyTransactor extends Remote{
     public float getBalance() throws KeyException, RemoteException;
     public String getAccountID() throws RemoteException;
     public UserInterface getOwner() throws RemoteException;
+    public void clear() throws RemoteException;
     ///TRANSACTOR
     public void join(KeyInterface t1) throws KeyException, RemoteException;
     public boolean canCommit(KeyInterface key) throws KeyException, RemoteException;

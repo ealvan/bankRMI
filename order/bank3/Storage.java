@@ -21,7 +21,7 @@ class Client implements Serializable{
 };
 
 public class Storage {
-    public static final String thisPackage = "bank1";
+    public static final String thisPackage = "bank3";
     public static final String UserFile="./"+thisPackage+"/users.ser";
     public static final String AccountFile="./"+thisPackage+"/accounts.ser";
 

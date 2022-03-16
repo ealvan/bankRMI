@@ -10,6 +10,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.io.File;
 
 public class BankC extends UnicastRemoteObject implements BankInterface{
 	private ArrayList<MyTransactor> lista= new ArrayList<MyTransactor>();
@@ -33,11 +34,12 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
         
         if(user.getUserId() != null){
             if(userList.containsKey(user.getUserId())){
-                try{
-                    throw  new Exception("La clave "+user.getUserId() + " ya existe!!, cree una nueva");
-                }catch(Exception e){
-                    e.printStackTrace();
-                }            
+                // try{
+                //     throw  new Exception("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
+                // }catch(Exception e){
+                //     e.printStackTrace();
+                // }            
+                System.err.println("Usuario con "+user.getUserId() + " ya existe!!, no agregado.");
                 return;
             }
             System.out.println("Nuevo usuario agregado UserID= "+user.getUserId());
@@ -111,7 +113,13 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
 
     public void addBankAccount(MyTransactor transactor) throws RemoteException{
         if(transactor.getAccountID() != null){
-            System.out.println("Nuevo transactor con AccountID agregado AccountID="+transactor.getAccountID());
+            for(MyTransactor item : this.lista){
+                if(item.getAccountID().equals(transactor.getAccountID())){
+                    System.out.println("Cuenta AccountID="+item.getAccountID() +" ya existe,no agregada");
+                    return;
+                }
+            }
+            System.out.println("Transactor AccountID agregado: "+transactor.getAccountID());
             this.lista.add(transactor);
             return;
         }
@@ -121,6 +129,7 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
         }catch(Exception e){
             e.printStackTrace();
         }
+
     }
 
 //--------------------------IMPLEMENTS------------------------------------------------
@@ -147,20 +156,75 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
     public ArrayList<MyTransactor> getAccounts(){
         return lista;
     }
+    //STORAGE-------------------------------------------------------------------------------
+    //Retrieve Hashmap
+    @SuppressWarnings("unchecked")
+    public void retrieveUserObjects(){
+        File f = new File(Storage.UserFile);
+        if(f.exists() && !f.isDirectory()){
+            this.userList = (HashMap<String,UserInterface>)Storage.retrieveObject(Storage.UserFile);
+        }else{
+            this.userList = new HashMap<String,UserInterface>();
+        }
+    }
+    //Retrieve ArrayList
+    @SuppressWarnings("unchecked")
+    public void retrieveAccountsObjects(){
+        File f = new File(Storage.AccountFile);
+        if(f.exists() && !f.isDirectory()){
+            // this.lista.addAll((ArrayList<MyTransactor>) Storage.retrieveObject(Storage.AccountFile));
+            this.lista = (ArrayList<MyTransactor>) Storage.retrieveObject(Storage.AccountFile);
+            // this.lista.addAll(this.lista);
+        }else{
+            this.lista = new ArrayList<MyTransactor>();
+        }
+    }    
+    public void saveUserObjects(){
+        Storage.saveObject(this.userList, Storage.UserFile);
+    }
+    public void saveAccountObjects(){
+        Storage.saveObject(this.lista, Storage.AccountFile);
+    }
+    public void printUsers() throws RemoteException{
+        if(this.userList.isEmpty()){
+            System.out.println("Esta vacia el this.userLista");
+        }else
+        for(String key: this.userList.keySet()) {
+            UserInterface user = this.userList.get(key);
+            System.out.println("UserID: "+user.getUserId() + " --- Username:" + user.getUsername() +" --- Edad:"+user.getAge());
+        }
+    }
+    public void printAccounts() throws RemoteException,KeyException{
+        if(this.lista.isEmpty()){
+            System.out.println("Esta vacia el this.lista");
+        }else
+        for(MyTransactor item: this.lista){
+            System.out.println(item.getAccountID()+" --- "+item.getBalance());
+        }
+    }
+
     public static void main(String args[])
             throws RemoteException, NotBoundException, InterruptedException, BadAmount, KeyException 
     {
         BankC bankC = new BankC();        
         
 
-        UserInterface user = new User("C1-User");
+        UserInterface user = new User("C1-User","juan",33);
         MyTransactor testAccount = new MyBankAccount("C001",user,300f);        
         
 
         bankC.startServer("192.168.2.21", 1093);
         //REMOVE ALL content before started
-        bankC.bankBaseObject.getUserList().clear();
-        bankC.bankBaseObject.getAccounts().clear();
+        // bankC.bankBaseObject.getUserList().clear();
+        // bankC.bankBaseObject.getAccounts().clear();
+
+        bankC.bankBaseObject.retrieveAccountsObjects();
+        bankC.bankBaseObject.retrieveUserObjects();
+
+        //-------------------------------------------------------------------
+        bankC.bankBaseObject.printAccounts();
+        bankC.bankBaseObject.printUsers();
+
 
         //add remote object transactor to account list objects
         bankC.bankBaseObject.addBankAccount(testAccount);
@@ -169,5 +233,12 @@ public class BankC extends UnicastRemoteObject implements BankInterface{
         Thread.sleep(10000);//"192.168.2.21", 1091, "192.168.2.21", 1092
 
         bankC.assignServer("192.168.2.21", 1091, "192.168.2.21", 1092);
+
+        Thread.sleep(14000);
+        
+        System.out.println("SAVE objects...");
+        bankC.bankBaseObject.saveAccountObjects();
+        bankC.bankBaseObject.saveUserObjects();
+
     }
 }

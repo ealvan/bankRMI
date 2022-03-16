@@ -13,12 +13,14 @@ public class User extends UnicastRemoteObject implements UserInterface{
 		this.userID = ID;
         this.name = name;
 	}
-    public User(String ID,String name, int age) throws RemoteException {
+	//OFFICE CTOR-------------------------------------------------------------
+	public User(String ID,String name, int age) throws RemoteException {
 		super();
 		this.userID = ID;
         this.age = age;
         this.name = name;
 	}
+	//-------------------------------------------------------------
 	public User(String ID) throws RemoteException {
 		super();
 		userID = ID;

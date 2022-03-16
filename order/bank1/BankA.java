@@ -161,11 +161,13 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
     public ArrayList<MyTransactor> getAccounts(){
         return lista;
     }
+    //STORAGE-------------------------------------------------------------------------------
     //Retrieve Hashmap
     @SuppressWarnings("unchecked")
     public void retrieveUserObjects(){
         File f = new File(Storage.UserFile);
         if(f.exists() && !f.isDirectory()){
+            System.out.println("File existe... : " + Storage.UserFile);
             this.userList = (HashMap<String,UserInterface>)Storage.retrieveObject(Storage.UserFile);
         }else{
             this.userList = new HashMap<String,UserInterface>();
@@ -176,7 +178,8 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
     public void retrieveAccountsObjects(){
         File f = new File(Storage.AccountFile);
         if(f.exists() && !f.isDirectory()){
-            this.lista.addAll((ArrayList<MyTransactor>) Storage.retrieveObject(Storage.AccountFile));
+            System.out.println("File existe... : " + Storage.AccountFile);
+            this.lista = (ArrayList<MyTransactor>) Storage.retrieveObject(Storage.AccountFile);
             // this.lista.addAll(this.lista);
         }else{
             this.lista = new ArrayList<MyTransactor>();
@@ -194,7 +197,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         }else
         for(String key: this.userList.keySet()) {
             UserInterface user = this.userList.get(key);
-            System.out.println(user.getUserId() + " --- " + user.getUsername());
+            System.out.println("UserID: "+user.getUserId() + " --- Username:" + user.getUsername() +" --- Edad:"+user.getAge());
         }
     }
     public void printAccounts() throws RemoteException,KeyException{
@@ -202,7 +205,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
             System.out.println("Esta vacia el this.lista");
         }else
         for(MyTransactor item: this.lista){
-            System.out.println(item.getAccountID()+" --- "+item.getBalance());
+            System.out.println("AccountID="+item.getAccountID()+" --- "+item.getBalance());
         }
     }
     public static void main(String args[])
@@ -232,7 +235,7 @@ public class BankA extends UnicastRemoteObject implements BankInterface{
         bankA.bankBaseObject.addBankAccount(testAccount);
         bankA.bankBaseObject.addBankAccount(testAccount1);
         bankA.bankBaseObject.addUser(user);
-
+        // bankA.getObject("local").browse("A001").setValue(10000);
         Thread.sleep(10000);
 
         bankA.assignServer("192.168.2.21", 1092, "192.168.2.21", 1093);
